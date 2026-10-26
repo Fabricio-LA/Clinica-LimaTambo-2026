@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Condiciones | Clínica Limatambo</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilos-clinica.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8fbf6; }
+
+        /* NAVBAR REMOVED */
+        
+        .terminos-container {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.03);
+            padding: 40px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+
+        .terminos-container h1 {
+            color: var(--matcha-dark);
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .terminos-container h4 {
+            color: var(--matcha-main);
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        .terminos-container p, .terminos-container li {
+            color: #555;
+            line-height: 1.8;
+            font-size: 0.95rem;
+        }
+
+        /* FOOTER */
+        footer { background: #3e5429; border-top: 1px solid var(--matcha-soft); padding: 40px 0; }
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover {
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light navbar-limatambo sticky-top shadow-sm py-1">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+            <img th:src="@{/images/LOGO_LIMATAMBO.png}" alt="Clínica Limatambo" style="height: 50px; width: auto; transform: scale(4.2); transform-origin: left center; margin-left: 25px; position: relative; top: 8px;">
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto align-items-center">
+                <li class="nav-item"><a class="nav-link-custom" th:href="@{/}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link-custom" th:href="@{/#especialidades}">Especialidades</a></li>
+                <li class="nav-item"><a class="nav-link-custom" th:href="@{/#especialistas}">Médicos</a></li>
+                <li class="nav-item"><a class="nav-link-custom" th:href="@{/ayuda}">Ayuda</a></li>
+                
+                <!-- Opciones visibles solo en móvil -->
+                <li class="nav-item d-lg-none mb-3 mt-2 w-100 text-center"><a class="btn-reservar-cita w-100 text-center" th:href="@{/paciente/reservar}">Reservar Cita</a></li>
+            </ul>
+            <div class="d-none d-lg-flex align-items-center">
+                <a th:href="@{/paciente/reservar}" class="btn-reservar-cita text-decoration-none">
+                    Reservar Cita
+                </a>
+                
+                <div sec:authorize="isAnonymous()" class="d-flex align-items-center">
+                    <div class="nav-divider"></div>
+                    <a th:href="@{/login}" class="btn-iniciar-sesion">
+                        <i class="bi bi-person-circle"></i> Iniciar Sesión
+                    </a>
+                </div>
+                
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center ms-3">
+                    <div class="nav-divider"></div>
+                    <div class="dropdown">
+                        <a class="btn-iniciar-sesion dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> <span sec:authentication="principal.nombreReal">Usuario</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm mt-2">
+                            <li><a class="dropdown-item" th:href="@{/dashboard-router}">Mi Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item text-danger">Cerrar Sesión</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+    <div class="terminos-container">
+        <h1 class="text-center">Términos y Condiciones</h1>
+        <p class="text-muted text-center mb-5">Última actualización: Junio de 2026</p>
+
+        <p>Bienvenido a Clínica Limatambo. Al acceder y utilizar nuestro sitio web, sistema de reservas y servicios en línea, usted acepta cumplir con los siguientes Términos y Condiciones. Si no está de acuerdo con alguna parte de estos términos, por favor no utilice nuestros servicios.</p>
+
+        <h4>1. Uso del Servicio</h4>
+        <p>El portal de Clínica Limatambo permite a los usuarios registrados gestionar citas médicas presenciales y ambulatorias, consultar el cuadro de médicos especialistas y acceder a su historial de atenciones. El usuario se compromete a proporcionar información verdadera, exacta, actual y completa durante el proceso de registro y uso del sistema.</p>
+
+        <h4>2. Privacidad y Protección de Datos</h4>
+        <p>En cumplimiento con la Ley de Protección de Datos Personales, la Clínica Limatambo asegura la confidencialidad de los datos médicos y personales de los pacientes. La información recopilada será utilizada exclusivamente para fines médicos, gestión de citas y facturación. No compartiremos su información con terceros sin su consentimiento explícito, salvo requerimiento judicial.</p>
+
+        <h4>3. Reserva y Cancelación de Citas</h4>
+        <ul>
+            <li>Las citas pueden ser reservadas a través del portal sujeto a la disponibilidad de los médicos especialistas.</li>
+            <li>El usuario podrá cancelar o reprogramar su cita hasta 24 horas antes de la atención programada sin penalidad.</li>
+            <li>Las cancelaciones fuera del plazo establecido pueden estar sujetas a retenciones parciales o totales según lo estipulado en nuestra política de reembolsos.</li>
+        </ul>
+
+        <h4>4. Responsabilidad Médica</h4>
+        <p>La información proporcionada a través del portal web y el centro de ayuda no sustituye en ningún caso una consulta médica presencial o virtual con un profesional de la salud calificado. En caso de emergencia, comuníquese inmediatamente a nuestros números de emergencia o diríjase a la sede más cercana.</p>
+
+        <h4>6. Modificaciones de los Términos</h4>
+        <p>Clínica Limatambo se reserva el derecho de modificar o actualizar estos Términos y Condiciones en cualquier momento. Se notificará a los usuarios sobre cambios sustanciales a través del portal o por correo electrónico.</p>
+
+        <h4>7. Contacto</h4>
+        <p>Para cualquier consulta relacionada con estos Términos y Condiciones, por favor contáctenos a través de nuestro Centro de Ayuda, WhatsApp o correo electrónico a contacto@limatambo.pe.</p>
+
+        <div class="text-center mt-5">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary px-4 rounded-pill">Volver</a>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="container mt-3">
+        <div class="row g-5 pb-4 align-items-start justify-content-between">
+            <div class="col-lg-4 col-md-12">
+                <div class="mb-3" style="overflow: hidden;">
+                    <img th:src="@{/images/LOGO_LIMATAMBO_ALTOCONTRASTE.png}" alt="Clínica Limatambo" style="height: 400px; width: auto; margin: -140px 0 -130px -95px; max-width: none;">
+                </div>
+                <p class="lh-lg mt-4" style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.75);">
+                    Más de 20 años brindando atención médica de excelencia a nuestros pacientes y sus familias.
+                </p>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-4" style="color: #38bdf8; letter-spacing: 1px;">SERVICIOS</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><a href="#" class="footer-link">Reservar cita</a></li>
+                    <li class="mb-3"><a th:href="@{/ayuda}" class="footer-link">Centro de Ayuda</a></li>
+                    <li class="mb-3"><a th:href="@{/terminos}" class="footer-link">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <h6 class="fw-bold mb-4" style="color: #38bdf8; letter-spacing: 1px;">CONTACTO</h6>
+                <ul class="list-unstyled" style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.75);">
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="bi bi-whatsapp fs-5" style="color: #38bdf8; margin-right: 12px;"></i>
+                        <span>WhatsApp: 914 870 501</span>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="bi bi-envelope fs-5" style="color: #38bdf8; margin-right: 12px;"></i>
+                        <span>contacto@limatambo.pe</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="bi bi-geo-alt fs-5" style="color: #38bdf8; margin-right: 12px; margin-top: 2px;"></i>
+                        <div>
+                            <span class="d-block mb-1"><strong>San Isidro:</strong> Av. República de Panamá 3606</span>
+                            <span class="d-block mb-1"><strong>S.J.L.:</strong> Av. Próceres de la Independencia</span>
+                            <span class="d-block"><strong>Callao:</strong> C.C. Minka</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center pt-4" style="border-top: 1px solid rgba(255,255,255,0.1);">
+            <small style="color: rgba(255, 255, 255, 0.5);">&copy; 2026 Clínica Limatambo &mdash; Todos los derechos reservados.</small>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Script para interceptar reservas de admin -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" sec:authorize="hasAnyRole('ADMIN', 'MEDICO')"></script>
+<script sec:authorize="hasAnyRole('ADMIN', 'MEDICO')">
+    document.addEventListener("DOMContentLoaded", function() {
+        var links = document.querySelectorAll('a[href$="/paciente/reservar"]');
+        links.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Acceso Restringido',
+                    text: 'Se debe de ingresar con el usuario Paciente de pruebas para reservar citas médicas.',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#8FB935'
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

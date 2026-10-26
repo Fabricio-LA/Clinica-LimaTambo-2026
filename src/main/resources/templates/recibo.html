@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recibo de Pago</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; font-size: 14px; max-width: 400px; margin: 0 auto; padding: 20px; color: #000; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .fw-bold { font-weight: bold; }
+        .header { border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+        .footer { border-top: 2px dashed #000; padding-top: 10px; margin-top: 20px; }
+        .item { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .total { font-size: 18px; font-weight: bold; margin-top: 10px; border-top: 1px solid #000; padding-top: 5px; }
+        button.print-btn { display: block; width: 100%; padding: 10px; background: #000; color: #fff; border: none; cursor: pointer; font-size: 16px; margin-bottom: 20px; }
+        @media print { button.print-btn { display: none; } }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">Imprimir Recibo</button>
+    <div class="header text-center">
+        <h2 class="fw-bold" style="margin: 0;">CLÍNICA LIMATAMBO</h2>
+        <p style="margin: 5px 0;">RUC: 20123456789</p>
+        <p style="margin: 5px 0;">Av. Principal 123, Lima</p>
+    </div>
+    
+    <div style="margin-bottom: 15px;">
+        <p><strong>Recibo N°:</strong> REC-<span th:text="${pago.idPago}"></span></p>
+        <p><strong>Fecha:</strong> <span th:text="${#temporals.format(pago.fechaPago, 'dd/MM/yyyy HH:mm')}"></span></p>
+        <p><strong>Paciente:</strong> <span th:text="${nombrePaciente}"></span></p>
+        <p><strong>Método:</strong> <span th:text="${pago.metodoPago}"></span></p>
+    </div>
+    
+    <div class="header">
+        <div class="item fw-bold">
+            <span>Descripción</span>
+            <span>Importe</span>
+        </div>
+    </div>
+    
+    <div class="item">
+        <span th:text="${descripcionPago}"></span>
+        <span>S/ <span th:text="${pago.monto}"></span></span>
+    </div>
+    
+    <div class="item total">
+        <span>TOTAL:</span>
+        <span>S/ <span th:text="${pago.monto}"></span></span>
+    </div>
+    
+    <div class="footer text-center">
+        <p>¡Gracias por su preferencia!</p>
+    </div>
+</body>
+</html>

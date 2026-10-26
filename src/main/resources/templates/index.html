@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clínica Limatambo | Excelencia Médica</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilos-clinica.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+
+        /* NAVBAR */
+        .navbar-limatambo {
+            background: #fff;
+            border-bottom: 1px solid var(--matcha-soft);
+        }
+        .navbar-limatambo .navbar-brand { font-weight: 700; color: var(--matcha-dark); font-size: 1.15rem; }
+        .navbar-limatambo .nav-link { color: #444; font-weight: 500; padding: 8px 16px; transition: color .2s; }
+        .navbar-limatambo .nav-link:hover { color: var(--matcha-main); }
+        .btn-nav-reservar {
+            background: var(--matcha-main);
+            color: #fff !important;
+            border-radius: 8px;
+            padding: 8px 22px;
+            font-weight: 600;
+            transition: background .2s;
+        }
+        .btn-nav-reservar:hover { background: var(--matcha-dark); }
+
+        /* HERO */
+        .hero-new {
+            background: linear-gradient(135deg, rgba(62, 86, 34, 0.95) 0%, rgba(143, 185, 53, 0.9) 100%);
+            min-height: 520px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-new::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: rgba(255,255,255,.04);
+            border-radius: 50%;
+            top: -150px; right: -100px;
+        }
+        .hero-new h1 { font-size: 3rem; font-weight: 800; color: #fff; line-height: 1.15; }
+        .hero-new p { color: rgba(255,255,255,.82); font-size: 1.1rem; max-width: 520px; margin: 0 auto; }
+        .btn-hero-primary {
+            background: rgba(255,255,255,.15);
+            border: 2px solid rgba(255,255,255,.7);
+            color: #fff;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            backdrop-filter: blur(4px);
+            transition: all .25s;
+        }
+        .btn-hero-primary:hover { background: rgba(255,255,255,.28); color: #fff; }
+        .btn-hero-secondary {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,.5);
+            color: rgba(255,255,255,.9);
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all .25s;
+        }
+        .btn-hero-secondary:hover { border-color: #fff; color: #fff; }
+
+        /* STATS */
+        .stats-bar { background: var(--matcha-dark); }
+        .stats-bar h3 { font-size: 1.8rem; font-weight: 800; color: var(--matcha-soft); }
+        .stats-bar small { color: rgba(255,255,255,.7); font-size: .8rem; }
+
+        /* SECTION TITLES */
+        .section-title { color: var(--matcha-dark); font-weight: 800; }
+        .section-underline {
+            width: 56px; height: 4px;
+            background: var(--matcha-main);
+            border-radius: 4px;
+            margin: 10px auto 0;
+        }
+
+        /* SPECIALTY CARDS */
+        .card-specialty-new {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.07);
+            transition: transform .25s, box-shadow .25s;
+            padding: 28px 20px;
+        }
+        .card-specialty-new:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 30px rgba(143, 185, 53, 0.2);
+        }
+        .spec-icon {
+            width: 60px; height: 60px;
+            background: var(--matcha-soft);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6rem;
+            color: var(--matcha-dark);
+            margin: 0 auto 16px;
+        }
+
+        /* QUIENES SOMOS */
+        .feature-item { display: flex; align-items: flex-start; gap: 14px; }
+        .feature-icon {
+            width: 44px; height: 44px; min-width: 44px;
+            background: var(--matcha-soft);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--matcha-dark);
+            font-size: 1.2rem;
+        }
+
+        /* DOCTOR CARDS */
+        .card-doctor { border: none; border-radius: 16px; box-shadow: 0 4px 18px rgba(0,0,0,.07); transition: transform .25s; }
+        .card-doctor:hover { transform: translateY(-4px); }
+        .doc-avatar {
+            width: 64px; height: 64px;
+            background: var(--matcha-soft);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem; color: var(--matcha-dark);
+        }
+
+        /* SEDES */
+        .card-sede {
+            border-radius: 16px;
+            border-top: 5px solid var(--matcha-main);
+            box-shadow: 0 4px 15px rgba(0,0,0,.06);
+        }
+
+        /* FOOTER */
+        footer { background: #fff; border-top: 1px solid var(--matcha-soft); }
+
+        /* WHATSAPP FLOAT */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 28px; right: 28px;
+            width: 58px; height: 58px;
+            background: #25d366;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(37,211,102,.45);
+            z-index: 9999;
+            text-decoration: none;
+            transition: transform .25s, box-shadow .25s;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 28px rgba(37,211,102,.6);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light navbar-limatambo sticky-top shadow-sm py-1">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+            <img th:src="@{/images/LOGO_LIMATAMBO.png}" alt="Clínica Limatambo" style="height: 50px; width: auto; transform: scale(4.2); transform-origin: left center; margin-left: 25px; position: relative; top: 8px;">
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto align-items-center">
+                <li class="nav-item"><a class="nav-link-custom active" th:href="@{/}">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link-custom" href="#especialidades">Especialidades</a></li>
+                <li class="nav-item"><a class="nav-link-custom" href="#especialistas">Médicos</a></li>
+                <li class="nav-item"><a class="nav-link-custom" th:href="@{/ayuda}">Ayuda</a></li>
+                
+                <!-- Opciones visibles solo en móvil -->
+                <li class="nav-item d-lg-none mb-3 mt-2 w-100 text-center"><a class="btn-reservar-cita w-100 text-center" th:href="@{/paciente/reservar}">Reservar Cita</a></li>
+            </ul>
+            <div class="d-none d-lg-flex align-items-center">
+                <a th:href="@{/paciente/reservar}" class="btn-reservar-cita text-decoration-none">
+                    Reservar Cita
+                </a>
+                
+                <div sec:authorize="isAnonymous()" class="d-flex align-items-center">
+                    <div class="nav-divider"></div>
+                    <a th:href="@{/login}" class="btn-iniciar-sesion">
+                        <i class="bi bi-person-circle"></i> Iniciar Sesión
+                    </a>
+                </div>
+                
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center ms-3">
+                    <div class="nav-divider"></div>
+                    <div class="dropdown">
+                        <a class="btn-iniciar-sesion dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> <span sec:authentication="principal.nombreReal">Usuario</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm mt-2">
+                            <li><a class="dropdown-item" th:href="@{/dashboard-router}">Mi Perfil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post">
+                                    <button type="submit" class="dropdown-item text-danger">Cerrar Sesión</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero-new text-center">
+    <div class="container py-5 position-relative">
+        <span class="badge rounded-pill px-3 py-2 mb-4 d-inline-block"
+              style="background:rgba(255,255,255,.15); color:#fff; font-weight:500; font-size:.85rem; border:1px solid rgba(255,255,255,.3);">
+            <i class="bi bi-shield-check me-1"></i> Atención 100% Segura y Certificada
+        </span>
+        <h1 class="mb-3">Tu salud, nuestra prioridad</h1>
+        <p class="mb-5 mx-auto">
+            Atención médica de calidad con los mejores especialistas.<br>
+            Reserva tu cita de forma rápida y segura.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a th:href="@{/paciente/reservar}" class="btn btn-hero-primary btn-lg">
+                <i class="bi bi-calendar2-check me-2"></i>Reservar Cita Online
+            </a>
+            <a href="tel:016103333" class="btn btn-hero-secondary btn-lg">
+                <i class="bi bi-telephone me-2"></i>Llamar Ahora
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- STATS -->
+<section class="stats-bar py-4">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3">
+                <h3 class="fw-bold mb-0">34+</h3>
+                <small>Años de Experiencia</small>
+            </div>
+            <div class="col-6 col-md-3">
+                <h3 class="fw-bold mb-0">3</h3>
+                <small>Sedes en Lima</small>
+            </div>
+            <div class="col-6 col-md-3">
+                <h3 class="fw-bold mb-0">6</h3>
+                <small>Especialidades Médicas</small>
+            </div>
+            <div class="col-6 col-md-3">
+                <h3 class="fw-bold mb-0">100%</h3>
+                <small>Calidad Humana</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONVENIOS -->
+<section id="convenios" class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="text-start mb-5">
+            <h2 class="section-title text-dark fs-1">Nuestros convenios</h2>
+            <div style="width: 80px; height: 3px; background: red; margin: 15px 0 25px;"></div>
+            <p class="text-dark fs-5 mb-0" style="max-width: 600px;">
+                Amplias opciones de seguros se convierten en diversas opciones de salud para nuestros pacientes.
+            </p>
+        </div>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-4 mt-5">
+            <!-- Logos representados con texto estilizado por no contar con la imagen -->
+            <div class="text-center" style="opacity: 0.7; filter: grayscale(100%); transition: 0.3s; cursor: pointer;" onmouseover="this.style.opacity='1'; this.style.filter='none';" onmouseout="this.style.opacity='0.7'; this.style.filter='grayscale(100%)';">
+                <h3 class="fw-bold fst-italic mb-0" style="color: #666; font-family: sans-serif; letter-spacing: -1px;">RIMAC</h3>
+            </div>
+            <div class="text-center d-flex align-items-center gap-2" style="opacity: 0.7; filter: grayscale(100%); transition: 0.3s; cursor: pointer;" onmouseover="this.style.opacity='1'; this.style.filter='none';" onmouseout="this.style.opacity='0.7'; this.style.filter='grayscale(100%)';">
+                <div style="width: 20px; height: 20px; border: 3px solid #333; border-radius: 2px;"></div>
+                <h5 class="fw-bold mb-0" style="color: #444;">Interseguro</h5>
+            </div>
+            <div class="text-center" style="opacity: 0.7; filter: grayscale(100%); transition: 0.3s; cursor: pointer;" onmouseover="this.style.opacity='1'; this.style.filter='none';" onmouseout="this.style.opacity='0.7'; this.style.filter='grayscale(100%)';">
+                <h5 class="fw-bold mb-0 fst-italic" style="color: #d15000;">La Positiva</h5>
+                <small class="fst-italic fw-bold" style="font-size: 0.7rem; color: #555;">Seguros</small>
+            </div>
+            <div class="text-center" style="opacity: 0.7; filter: grayscale(100%); transition: 0.3s; cursor: pointer;" onmouseover="this.style.opacity='1'; this.style.filter='none';" onmouseout="this.style.opacity='0.7'; this.style.filter='grayscale(100%)';">
+                <div style="width: 28px; height: 28px; border: 2px solid #555; border-radius: 50%; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <div style="width: 2px; height: 18px; background: #555;"></div>
+                    <div style="width: 14px; height: 2px; background: #555; position: absolute; top: 13px;"></div>
+                </div>
+                <h5 class="fw-bold mb-0" style="color: #444; letter-spacing: 1px;">MAPFRE</h5>
+            </div>
+            <div class="text-center d-flex align-items-center gap-2" style="opacity: 0.7; filter: grayscale(100%); transition: 0.3s; cursor: pointer;" onmouseover="this.style.opacity='1'; this.style.filter='none';" onmouseout="this.style.opacity='0.7'; this.style.filter='grayscale(100%)';">
+                <div style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #eee 0%, #666 100%);"></div>
+                <div class="text-start">
+                    <h5 class="fw-bold mb-0" style="color: #555;">pacifico</h5>
+                    <small class="d-block" style="font-size: 0.7rem; color: #777; margin-top: -3px;">seguros</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ESPECIALIDADES -->
+<section id="especialidades" class="py-5" style="background:#f8fbf6;">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Nuestras Especialidades</h2>
+            <div class="section-underline mx-auto"></div>
+            <p class="text-muted mt-3">Contamos con 6 especialidades médicas para cuidar tu salud integral</p>
+        </div>
+        <div class="row g-4 text-center">
+            <div class="col-md-4 col-sm-6">
+                <div class="card-specialty-new h-100">
+                    <div class="spec-icon"><i class="bi bi-capsule"></i></div>
+                    <h5 class="fw-bold mb-2">Medicina General</h5>
+                    <p class="text-muted small mb-3">Cuidado integral orientado al bienestar familiar.</p>
+                    <span class="badge" style="background:var(--matcha-soft); color:var(--matcha-dark); font-size:.85rem;">S/ 80.00</span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="card-specialty-new h-100">
+                    <div class="spec-icon"><i class="bi bi-activity"></i></div>
+                    <h5 class="fw-bold mb-2">Cardiología</h5>
+                    <p class="text-muted small mb-3">Diagnóstico avanzado para tu salud cardiovascular.</p>
+                    <span class="badge" style="background:var(--matcha-soft); color:var(--matcha-dark); font-size:.85rem;">S/ 120.00</span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="card-specialty-new h-100">
+                    <div class="spec-icon"><i class="bi bi-emoji-smile"></i></div>
+                    <h5 class="fw-bold mb-2">Pediatría</h5>
+                    <p class="text-muted small mb-3">Especialistas dedicados al crecimiento de los niños.</p>
+                    <span class="badge" style="background:var(--matcha-soft); color:var(--matcha-dark); font-size:.85rem;">S/ 100.00</span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="card-specialty-new h-100">
+                    <div class="spec-icon"><i class="bi bi-badge-cc"></i></div>
+                    <h5 class="fw-bold mb-2">Dermatología</h5>
+                    <p class="text-muted small mb-3">Cuidado y tratamiento de la piel con tecnología moderna.</p>
+                    <span class="badge" style="background:var(--matcha-soft); color:var(--matcha-dark); font-size:.85rem;">S/ 110.00</span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="card-specialty-new h-100">
+                    <div class="spec-icon"><i class="bi bi-gender-female"></i></div>
+                    <h5 class="fw-bold mb-2">Ginecología</h5>
+                    <p class="text-muted small mb-3">Atención integral de la salud femenina en todas las etapas.</p>
+                    <span class="badge" style="background:var(--matcha-soft); color:var(--matcha-dark); font-size:.85rem;">S/ 120.00</span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6">
+                <div class="card-specialty-new h-100">
+                    <div class="spec-icon"><i class="bi bi-emoji-laughing"></i></div>
+                    <h5 class="fw-bold mb-2">Odontología</h5>
+                    <p class="text-muted small mb-3">Salud bucal y sonrisas perfectas para toda la familia.</p>
+                    <span class="badge" style="background:var(--matcha-soft); color:var(--matcha-dark); font-size:.85rem;">S/ 90.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- MÉDICOS -->
+<section id="especialistas" class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Nuestros Especialistas</h2>
+            <div class="section-underline mx-auto"></div>
+            <p class="text-muted mt-3">Conoce a nuestro equipo médico de primer nivel</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" th:each="dto, iterStat : ${medicos}">
+                <div class="card card-doctor h-100">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3 gap-3">
+                            <div class="doc-avatar p-0 overflow-hidden shadow-sm me-4" style="width: 75px; height: 75px; border-radius: 50%; border: 2px solid var(--matcha-main); flex-shrink: 0; background: #fff; margin-right: 1.5rem !important;">
+                                <img th:src="@{/images/doctores/} + ${dto.medico.fotoPerfil != null ? dto.medico.fotoPerfil : 'default-doctor.png'}" alt="Doctor" style="width:100%; height:100%; object-fit:cover; border-radius: 50%;">
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-1" th:text="${'Dr. ' + dto.medico.nombre + ' ' + dto.medico.apellido}">Dr. Nombre</h6>
+                                <span class="badge rounded-pill px-3" style="background:var(--matcha-soft); color:var(--matcha-dark);" th:text="${dto.especialidadNombre}">Especialidad</span>
+                            </div>
+                        </div>
+                        <hr class="opacity-10">
+                        <div class="d-flex flex-column gap-2 mb-3">
+                            <div class="d-flex align-items-center small text-muted">
+                                <i class="bi bi-clock text-success" style="margin-right: 0.75rem !important; font-size: 1.1rem;"></i>
+                                <span th:text="${dto.medico.horaInicio + ' - ' + dto.medico.horaFin}">08:00 - 14:00</span>
+                            </div>
+                            <div class="d-flex align-items-center small text-muted">
+                                <i class="bi bi-cash-coin text-success" style="margin-right: 0.75rem !important; font-size: 1.1rem;"></i>
+                                <span>Consulta: S/ 100.00</span>
+                            </div>
+                        </div>
+                        <a th:href="@{/paciente/reservar}" class="btn w-100 fw-semibold" style="background:var(--matcha-soft); color:var(--matcha-dark); border-radius:10px;">
+                            <i class="bi bi-calendar2-plus me-1"></i>Agendar Cita
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(medicos)}" class="col-12 text-center text-muted py-4">
+                <i class="bi bi-people fs-2 d-block mb-2 text-muted"></i>
+                No hay médicos disponibles por el momento.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUIÉNES SOMOS -->
+<section id="nosotros" class="py-5" style="background:#f8fbf6;">
+    <div class="container py-4">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <h2 class="section-title mb-2">¿Quiénes Somos?</h2>
+                <div class="section-underline mb-4" style="margin:10px 0 24px;"></div>
+                <p class="text-muted mb-4">
+                    Clínicas Limatambo es una institución dedicada a brindar atenciones de salud, comprometida en calidad, servicio y cuidados médicos de excelencia desde 1990.
+                </p>
+                <div class="d-flex flex-column gap-3 mb-4">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Atención Certificada</h6>
+                            <small class="text-muted">Médicos certificados con más de 10 años de experiencia promedio.</small>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Atención 6 días a la semana</h6>
+                            <small class="text-muted">Horarios flexibles adaptados a tus necesidades.</small>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="bi bi-heart-pulse"></i></div>
+                        <div>
+                            <h6 class="fw-bold mb-1">Tecnología de Vanguardia</h6>
+                            <small class="text-muted">Equipos de diagnóstico de última generación en todas las sedes.</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded-3" style="background:#fff; border-left: 4px solid var(--matcha-main);">
+                            <h6 class="fw-bold mb-1">Misión</h6>
+                            <p class="small text-muted mb-0">Bienestar familiar con calidad y profesionales comprometidos.</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-3 rounded-3" style="background:#fff; border-left: 4px solid var(--matcha-main);">
+                            <h6 class="fw-bold mb-1">Visión</h6>
+                            <p class="small text-muted mb-0">Ser líder en salud con atención centrada en el paciente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="rounded-4 overflow-hidden shadow-sm" style="height: 100%; min-height: 400px; position: relative;">
+                    <img th:src="@{/images/equipo_clinica.jpg}" alt="Equipo Clínica Limatambo" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SEDES -->
+<section id="sedes" class="py-5 bg-white">
+    <div class="container py-4">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Ubica nuestras Sedes</h2>
+            <div class="section-underline mx-auto"></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-sede border-0 shadow-sm p-4 h-100 text-center">
+                    <i class="bi bi-geo-alt-fill text-success fs-2 mb-3"></i>
+                    <h5 class="fw-bold">San Isidro</h5>
+                    <p class="small text-muted mb-0">Av. República de Panamá 3606</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-sede border-0 shadow-sm p-4 h-100 text-center">
+                    <i class="bi bi-geo-alt-fill text-success fs-2 mb-3"></i>
+                    <h5 class="fw-bold">S.J.L.</h5>
+                    <p class="small text-muted mb-0">Av. Próceres de la Independencia</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-sede border-0 shadow-sm p-4 h-100 text-center">
+                    <i class="bi bi-geo-alt-fill text-success fs-2 mb-3"></i>
+                    <h5 class="fw-bold">Minka - Callao</h5>
+                    <p class="small text-muted mb-0">C.C. Minka, Callao</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="pt-5 pb-4" style="background-color: #3e5429;">
+    <style>
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover {
+            color: #ffffff;
+        }
+    </style>
+    <div class="container mt-3">
+        <div class="row g-5 pb-4 align-items-start justify-content-between">
+            <div class="col-lg-4 col-md-12">
+                <div class="mb-3" style="overflow: hidden;">
+                    <img th:src="@{/images/LOGO_LIMATAMBO_ALTOCONTRASTE.png}" alt="Clínica Limatambo" style="height: 400px; width: auto; margin: -140px 0 -130px -95px; max-width: none;">
+                </div>
+                <p class="lh-lg mt-4" style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.75);">
+                    Más de 20 años brindando atención médica de excelencia a nuestros pacientes y sus familias.
+                </p>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <h6 class="fw-bold mb-4" style="color: #38bdf8; letter-spacing: 1px;">SERVICIOS</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-3"><a th:href="@{/paciente/reservar}" class="footer-link">Reservar cita</a></li>
+                    
+                    <li class="mb-3"><a th:href="@{/ayuda}" class="footer-link">Centro de Ayuda</a></li>
+                    <li class="mb-3"><a th:href="@{/terminos}" class="footer-link">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <h6 class="fw-bold mb-4" style="color: #38bdf8; letter-spacing: 1px;">CONTACTO</h6>
+                <ul class="list-unstyled" style="font-size: 0.95rem; color: rgba(255, 255, 255, 0.75);">
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="bi bi-whatsapp fs-5" style="color: #38bdf8; margin-right: 12px;"></i>
+                        <span>WhatsApp: 914 870 501</span>
+                    </li>
+                    <li class="d-flex align-items-center mb-3">
+                        <i class="bi bi-envelope fs-5" style="color: #38bdf8; margin-right: 12px;"></i>
+                        <span>contacto@limatambo.pe</span>
+                    </li>
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="bi bi-geo-alt fs-5" style="color: #38bdf8; margin-right: 12px; margin-top: 2px;"></i>
+                        <div>
+                            <span class="d-block mb-1"><strong>San Isidro:</strong> Av. República de Panamá 3606</span>
+                            <span class="d-block mb-1"><strong>S.J.L.:</strong> Av. Próceres de la Independencia</span>
+                            <span class="d-block"><strong>Callao:</strong> C.C. Minka</span>
+                        </div>
+                    </li>
+                    <li class="d-flex align-items-start mb-3">
+                        <i class="bi bi-clock fs-5" style="color: #38bdf8; margin-right: 12px; margin-top: 2px;"></i>
+                        <div>
+                            <span class="d-block mb-1">Lun-Sáb: 7:00 AM – 9:00 PM</span>
+                            <span class="d-block">Emergencias: 24/7</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center pt-4" style="border-top: 1px solid rgba(255,255,255,0.1);">
+            <small style="color: rgba(255, 255, 255, 0.5);">&copy; 2026 Clínica Limatambo &mdash; Todos los derechos reservados.</small>
+        </div>
+    </div>
+</footer>
+
+<!-- BOTÓN FLOTANTE WHATSAPP -->
+<a href="https://wa.me/51914870501?text=Hola,%20deseo%20realizar%20una%20consulta%20en%20la%20Cl%C3%ADnica%20Limatambo" target="_blank" class="whatsapp-float" title="Chatea con nosotros en WhatsApp">
+    <i class="bi bi-whatsapp"></i>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Script para interceptar reservas de admin -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" sec:authorize="hasAnyRole('ADMIN', 'MEDICO')"></script>
+<script sec:authorize="hasAnyRole('ADMIN', 'MEDICO')">
+    document.addEventListener("DOMContentLoaded", function() {
+        var links = document.querySelectorAll('a[href$="/paciente/reservar"]');
+        links.forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Acceso Restringido',
+                    text: 'Se debe de ingresar con el usuario Paciente de pruebas para reservar citas médicas.',
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#8FB935'
+                });
+            });
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link-custom');
+        
+        window.addEventListener('scroll', () => {
+            let scrollY = window.pageYOffset;
+            let current = '';
+
+            if (scrollY < 200) {
+                current = '/'; // Inicio
+            } else {
+                document.querySelectorAll('section[id]').forEach(section => {
+                    const sectionTop = section.offsetTop - 200;
+                    const sectionHeight = section.offsetHeight;
+                    if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                        current = '#' + section.getAttribute('id');
+                    }
+                });
+            }
+
+            if (current) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    let href = link.getAttribute('href') || link.getAttribute('th:href');
+                    if (href && (href === current || href.endsWith(current) || (current === '/' && href.includes('}')))) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

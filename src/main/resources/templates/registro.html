@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro | Clínica Limatambo</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilos-clinica.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-body py-5">
+    <div class="container d-flex justify-content-center">
+        <div class="card border-0 shadow-lg p-4" style="border-radius: 15px; width: 100%; max-width: 600px;">
+            <div class="text-center mb-4">
+                <i class="bi bi-hospital-fill fs-1" style="color: var(--matcha-main);"></i>
+                <h4 class="fw-bold mt-2">Crear Cuenta</h4>
+                <p class="text-muted small">Ingresa tus datos para registrarte como paciente</p>
+            </div>
+            
+            <div th:if="${error}" class="alert alert-danger py-2 small" th:text="${error}"></div>
+            <div th:if="${param.exito}" class="alert alert-success py-2 small">Cuenta creada exitosamente. Ya puedes iniciar sesión.</div>
+
+            <form th:action="@{/registro}" method="post">
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Nombres</label>
+                        <input type="text" id="nombre" name="nombre" class="form-control bg-light border-0" pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo se permiten letras y espacios" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Apellidos</label>
+                        <input type="text" id="apellido" name="apellido" class="form-control bg-light border-0" pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$" title="Solo se permiten letras y espacios" required>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">DNI</label>
+                        <input type="text" id="dni" name="dni" class="form-control bg-light border-0" maxlength="8" minlength="8" pattern="^\d{8}$" title="El DNI debe tener exactamente 8 números" inputmode="numeric" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">Teléfono</label>
+                        <input type="text" id="telefono" name="telefono" class="form-control bg-light border-0" maxlength="9" pattern="^\d{9}$" title="Ingrese exactamente 9 números" inputmode="numeric" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" name="fechaNacimiento" class="form-control bg-light border-0" required>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold">¿Cuenta con Seguro?</label>
+                        <select id="hasInsurance" class="form-select bg-light border-0" onchange="toggleInsuranceSelect()" required>
+                            <option value="no">No, soy Particular</option>
+                            <option value="si">Sí, tengo seguro de salud</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6" id="insuranceSelectContainer" style="display: none;">
+                        <label class="form-label small fw-bold">Seleccione Seguro</label>
+                        <select name="tipoSeguro" id="tipoSeguro" class="form-select bg-light border-0">
+                            <option value="Particular">Ninguno (Particular)</option>
+                            <option value="Rimac">Rímac Seguros (20% Desc.)</option>
+                            <option value="Interseguro">Interseguro (15% Desc.)</option>
+                            <option value="LaPositiva">La Positiva (15% Desc.)</option>
+                            <option value="Mapfre">Mapfre (10% Desc.)</option>
+                            <option value="Pacifico">Pacífico Seguros (15% Desc.)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Correo Electrónico</label>
+                    <input type="email" name="email" class="form-control bg-light border-0" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label small fw-bold">Contraseña</label>
+                    <div class="input-group">
+                        <input type="password" id="passwordInputRegistro" name="password" class="form-control bg-light border-0" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$" title="Debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y carácter especial" required>
+                        <button class="btn btn-light bg-light border-0" type="button" id="togglePasswordBtnRegistro" style="color: var(--matcha-main);">
+                            <i class="bi bi-eye-slash" id="togglePasswordIconRegistro"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" value="" id="terminosCheck" required>
+                    <label class="form-check-label small text-muted" for="terminosCheck">
+                        He leído y acepto los <a th:href="@{/terminos}" target="_blank" class="text-decoration-none" style="color: var(--matcha-main);">Términos y Condiciones</a>.
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-reservar w-100 mb-3">Registrarse</button>
+                
+                <div class="text-center">
+                    <a th:href="@{/login}" class="text-decoration-none small text-muted">
+                        <i class="bi bi-arrow-left me-1"></i> Volver al login
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const fechaInput = document.getElementById('fechaNacimiento');
+            if(fechaInput) {
+                const hoy = new Date();
+                let maxDate = new Date(hoy.getFullYear() - 18, hoy.getMonth(), hoy.getDate());
+                let minDate = new Date(hoy.getFullYear() - 100, hoy.getMonth(), hoy.getDate());
+                
+                fechaInput.max = maxDate.toISOString().split('T')[0];
+                fechaInput.min = minDate.toISOString().split('T')[0];
+            }
+            
+            // Restricciones en tiempo real
+            const nombre = document.getElementById('nombre');
+            const apellido = document.getElementById('apellido');
+            const dni = document.getElementById('dni');
+            const telefono = document.getElementById('telefono');
+            
+            if (nombre) {
+                nombre.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                });
+            }
+            if (apellido) {
+                apellido.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                });
+            }
+            if (dni) {
+                dni.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').substring(0, 8);
+                });
+            }
+            if (telefono) {
+                telefono.addEventListener('input', function() {
+                    this.value = this.value.replace(/\D/g, '').substring(0, 9);
+                });
+            }
+
+            const passwordInputRegistro = document.getElementById('passwordInputRegistro');
+            const togglePasswordBtnRegistro = document.getElementById('togglePasswordBtnRegistro');
+            const togglePasswordIconRegistro = document.getElementById('togglePasswordIconRegistro');
+            
+            if(togglePasswordBtnRegistro) {
+                togglePasswordBtnRegistro.addEventListener('click', function () {
+                    const type = passwordInputRegistro.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInputRegistro.setAttribute('type', type);
+                    
+                    if (type === 'password') {
+                        togglePasswordIconRegistro.classList.remove('bi-eye');
+                        togglePasswordIconRegistro.classList.add('bi-eye-slash');
+                    } else {
+                        togglePasswordIconRegistro.classList.remove('bi-eye-slash');
+                        togglePasswordIconRegistro.classList.add('bi-eye');
+                    }
+                });
+            }
+        });
+
+        function toggleInsuranceSelect() {
+            const hasInsurance = document.getElementById('hasInsurance').value;
+            const container = document.getElementById('insuranceSelectContainer');
+            const selectSeguro = document.getElementById('tipoSeguro');
+            
+            if (hasInsurance === 'si') {
+                container.style.display = 'block';
+                selectSeguro.value = 'Rimac';
+                selectSeguro.required = true;
+            } else {
+                container.style.display = 'none';
+                selectSeguro.value = 'Particular';
+                selectSeguro.required = false;
+            }
+        }
+    </script>
+</body>
+</html>
+
+

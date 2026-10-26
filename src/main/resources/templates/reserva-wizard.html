@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar Cita | Clínica Limatambo</title>
+    
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilos-clinica.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <style>
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-clinica sticky-top p-3" style="background-color: var(--surface);">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center text-dark" th:href="@{/paciente/dashboard}" style="font-size: 1.3rem;">
+                <i class="bi bi-shield-plus text-success me-2 fs-3"></i>
+                <span class="fw-bold text-success me-1">CLÍNICA LIMATAMBO</span>
+                <span class="text-muted fw-normal"> - Reservas</span>
+            </a>
+            <div>
+                <a th:href="@{/paciente/dashboard}" class="btn btn-outline-danger btn-sm px-4" style="border-radius: 6px;">Cancelar</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <!-- Stepper V2 -->
+                <div class="stepper-v2-container mb-5">
+                    <div class="step-v2">
+                        <div class="step-circle-v2 active" id="indicator-1">1</div>
+                        <span class="step-label-v2 active">Especialidad</span>
+                    </div>
+                    <div class="step-line-v2" id="line-1"></div>
+                    <div class="step-v2">
+                        <div class="step-circle-v2" id="indicator-2">2</div>
+                        <span class="step-label-v2" id="label-2">Médico y Horario</span>
+                    </div>
+                    <div class="step-line-v2" id="line-2"></div>
+                    <div class="step-v2">
+                        <div class="step-circle-v2" id="indicator-3">3</div>
+                        <span class="step-label-v2" id="label-3">Confirmación</span>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4 p-md-5" style="border-radius: 16px;">
+                    
+                    <form id="wizardForm" th:action="@{/citas/reservar}" method="post">
+                        
+                        <!-- P A S O   1 -->
+                        <div class="wizard-step active" id="step1">
+                            <h4 class="fw-bold mb-4" style="color: var(--matcha-dark)"><i class="bi bi-heart-pulse me-2"></i>Selecciona la Especialidad</h4>
+                            
+                            <input type="hidden" name="idEspecialidad" id="inputEspecialidad" required>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4" th:each="esp : ${especialidades}">
+                                    <div class="card-especialidad-v2 h-100" th:data-id="${esp.idEspecialidad}" th:data-name="${esp.nombreEspecialidad}" onclick="selectEspecialidad(this)">
+                                        <div class="icon-box-v2" th:switch="${esp.nombreEspecialidad}">
+                                            <i th:case="'Cardiología'" class="bi bi-heart-pulse"></i>
+                                            <i th:case="'Medicina General'" class="bi bi-hospital"></i>
+                                            <i th:case="'Pediatría'" class="bi bi-emoji-smile"></i>
+                                            <i th:case="'Dermatología'" class="bi bi-droplet"></i>
+                                            <i th:case="'Ginecología'" class="bi bi-gender-female"></i>
+                                            <i th:case="'Odontología'" class="bi bi-emoji-grin"></i>
+                                            <i th:case="*" class="bi bi-activity"></i>
+                                        </div>
+                                        <h5 th:text="${esp.nombreEspecialidad}">Nombre</h5>
+                                        <p th:switch="${esp.nombreEspecialidad}">
+                                            <span th:case="'Medicina General'">Consultas integrales y preventivas</span>
+                                            <span th:case="'Cardiología'">Cuidado del sistema cardiovascular</span>
+                                            <span th:case="'Pediatría'">Salud y bienestar infantil</span>
+                                            <span th:case="'Dermatología'">Tratamiento de piel y cabello</span>
+                                            <span th:case="'Ginecología'">Salud reproductiva femenina</span>
+                                            <span th:case="'Odontología'">Odontología estética y preventiva</span>
+                                            <span th:case="*">Atención médica especializada</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                                <span class="text-muted fst-italic" style="font-size: 14px;">Seleccione una especialidad para continuar</span>
+                                <button type="button" class="btn btn-secondary px-4" id="btnNext1" disabled onclick="nextStep(2)" style="border-radius: 20px; background-color:#e0e0e0; color:#888; border:none;">Siguiente <i class="bi bi-arrow-right ms-2"></i></button>
+                            </div>
+
+                            <div class="row g-3 mt-4">
+                                <div class="col-md-6">
+                                    <div class="banner-info-v2 h-100">
+                                        <div class="icon-box-v2"><i class="bi bi-shield-check"></i></div>
+                                        <div>
+                                            <h6 class="mb-1" style="color: var(--matcha-dark); font-weight:600;">Atención Garantizada</h6>
+                                            <p class="mb-0 text-muted" style="font-size: 11px;">Nuestros especialistas están certificados por las mejores instituciones médicas.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="banner-info-v2 h-100">
+                                        <div class="icon-box-v2"><i class="bi bi-headset"></i></div>
+                                        <div>
+                                            <h6 class="mb-1" style="color: var(--matcha-dark); font-weight:600;">Soporte al Paciente</h6>
+                                            <p class="mb-0 text-muted" style="font-size: 11px;">¿Tienes dudas con tu reserva? Contáctanos las 24 horas del día.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- P A S O   2 -->
+                        <div class="wizard-step" id="step2">
+                            <h4 class="fw-bold mb-4" style="color: var(--matcha-dark)"><i class="bi bi-people me-2"></i>Elige a tu Médico</h4>
+                            
+                            <input type="hidden" name="idMedico" id="inputMedico" required>
+                            <div class="row g-3 mb-4" id="medicosContainer">
+                                <div class="col-md-6 medico-card" th:each="med : ${medicos}" th:data-esp="${med.idEspecialidad}">
+                                    <div class="card-medico-v2" th:data-id="${med.idMedico}" th:data-name="${'Dr. ' + med.nombre + ' ' + med.apellido}" th:data-dias="${med.diasLaborables}" onclick="selectMedico(this)">
+                                        <div class="d-flex align-items-center">
+                                            <img th:src="@{/images/doctores/} + ${med.fotoPerfil != null ? med.fotoPerfil : 'default-doctor.png'}" alt="Doctor" class="doc-avatar-v2 me-3 shadow-sm border">
+                                            <div>
+                                                <h6 class="fw-bold mb-1 text-dark" th:text="${'Dr. ' + med.nombre + ' ' + med.apellido}">Dr. Nombre</h6>
+                                                <small class="text-muted d-block" style="font-size:12px;" th:text="${med.diasLaborablesTexto + ' | ' + med.horaInicio + ' - ' + med.horaFin}">Lun a Vie | 08:00 - 14:00</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mt-2">
+                                <div class="col-md-5">
+                                    <h6 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-calendar3 me-2"></i>Fecha de Consulta</h6>
+                                    <input type="text" class="form-control" name="fechaCita" id="inputFecha" placeholder="Selecciona un doctor primero..." required readonly style="background-color: var(--surface); border:none; padding:15px;">
+                                </div>
+                                <div class="col-md-7">
+                                    <h6 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-clock me-2"></i>Hora Disponible</h6>
+                                    <input type="hidden" name="horaCita" id="inputHoraHidden" required>
+                                    <div id="contenedorHoras" class="d-flex flex-wrap gap-2">
+                                        <div class="text-muted small w-100">Seleccione primero una fecha para ver los horarios.</div>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <small id="alertaHorario" class="text-danger fw-bold" style="display: none;">Este doctor no atiende en el día seleccionado o ya no tiene turnos.</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                                <button type="button" class="btn btn-outline-secondary px-4" onclick="prevStep(1)" style="border-radius: 20px;"><i class="bi bi-arrow-left me-2"></i> Atrás</button>
+                                <button type="button" class="btn btn-secondary px-4" id="btnNext2" disabled onclick="nextStep(3)" style="border-radius: 20px; background-color:#e0e0e0; color:#888; border:none;">Siguiente <i class="bi bi-arrow-right ms-2"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- P A S O   3 -->
+                        <div class="wizard-step" id="step3">
+                            <div class="text-center mb-4">
+                                <div class="d-inline-flex align-items-center justify-content-center text-white rounded-circle mb-3 shadow-sm" style="width: 70px; height: 70px; background-color: #6da324;">
+                                    <i class="bi bi-check-circle fs-1"></i>
+                                </div>
+                                <h3 class="fw-bold" style="color: var(--matcha-dark);">Resumen de tu Reserva</h3>
+                                <p class="text-muted">Por favor revisa los datos antes de confirmar.</p>
+                            </div>
+
+                            <div class="row g-3 mb-4 mt-3">
+                                <div class="col-md-6">
+                                    <div class="card-confirmacion-v2 h-100">
+                                        <div class="icon-box-v2" id="resumenIconoEspecialidad"><i class="bi bi-activity"></i></div>
+                                        <div>
+                                            <small class="text-muted d-block fw-bold" style="font-size: 11px;">Especialidad</small>
+                                            <span class="text-dark" id="resumenEspecialidad">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card-confirmacion-v2 h-100">
+                                        <div class="icon-box-v2"><i class="bi bi-person"></i></div>
+                                        <div>
+                                            <small class="text-muted d-block fw-bold" style="font-size: 11px;">Médico</small>
+                                            <span class="text-dark" id="resumenMedico">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card-confirmacion-v2 h-100">
+                                        <div class="icon-box-v2"><i class="bi bi-calendar"></i></div>
+                                        <div>
+                                            <small class="text-muted d-block fw-bold" style="font-size: 11px;">Fecha</small>
+                                            <span class="text-dark" id="resumenFecha">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card-confirmacion-v2 h-100">
+                                        <div class="icon-box-v2"><i class="bi bi-clock"></i></div>
+                                        <div>
+                                            <small class="text-muted d-block fw-bold" style="font-size: 11px;">Hora</small>
+                                            <span class="text-dark" id="resumenHora">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 px-2" style="border-top: 1px dashed #ccc;">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted">Tarifa de Consulta:</span>
+                                    <span class="text-dark" id="tarifaBaseMonto">S/ 100.00</span>
+                                </div>
+                                <div class="justify-content-between align-items-center mb-3 d-none" id="coberturaSeguroContainer">
+                                    <span class="text-muted">Cobertura Seguro (<span id="nombreSeguroLabel" th:text="${tipoSeguro} + ' ' + ${#numbers.formatDecimal(descuentoSeguro * 100, 0, 0)} + '%'">Ninguno</span>):</span>
+                                    <span class="fw-bold text-danger" id="montoDescuento">- S/ 0.00</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-3 p-3 rounded" style="background-color: var(--surface);">
+                                    <span class="text-success" style="font-weight: 500;">Total a Pagar:</span>
+                                    <span class="fw-bold fs-4" style="color: var(--matcha-dark);" id="totalPagar">S/ 100.00</span>
+                                </div>
+                            </div>
+
+                            <div class="form-check mt-4 mb-2 text-start">
+                                <input class="form-check-input border-secondary" type="checkbox" id="terminosReservaCheck" required>
+                                <label class="form-check-label text-muted small" for="terminosReservaCheck">
+                                    He leído y acepto los <a th:href="@{/terminos}" target="_blank" class="text-decoration-none fw-bold" style="color: var(--matcha-dark);">Términos y Condiciones</a> del servicio de salud.
+                                </label>
+                            </div>
+
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary px-4" onclick="prevStep(2)" style="border-radius: 20px;"><i class="bi bi-arrow-left me-2"></i> Atrás</button>
+                                <button type="submit" class="btn btn-reservar px-4" style="background-color: #3e5622;">Confirmar Cita <i class="bi bi-check-circle ms-2"></i></button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <small class="text-muted">© 2024 Clínica Limatambo - Todos los derechos reservados</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+
+    <script th:inline="javascript">
+        let espName = "";
+        let medName = "";
+        let espIconHtml = "";
+        let flatpickrInstance = null;
+        let tarifaSeleccionada = 100.00;
+
+        const preciosEspecialidad = {
+            "medicina general": 80.00,
+            "odontología": 90.00,
+            "odontologia": 90.00,
+            "pediatría": 100.00,
+            "pediatria": 100.00,
+            "dermatología": 110.00,
+            "dermatologia": 110.00,
+            "cardiología": 120.00,
+            "cardiologia": 120.00,
+            "ginecología": 120.00,
+            "ginecologia": 120.00
+        };
+
+        function selectEspecialidad(element) {
+            document.querySelectorAll('#step1 .card-especialidad-v2').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('inputEspecialidad').value = element.getAttribute('data-id');
+            espName = element.getAttribute('data-name');
+            espIconHtml = element.querySelector('.icon-box-v2').innerHTML;
+            
+            const nameLower = espName ? espName.toLowerCase() : "";
+            tarifaSeleccionada = preciosEspecialidad[nameLower] || 100.00;
+            
+            let btnNext = document.getElementById('btnNext1');
+            btnNext.disabled = false;
+            btnNext.style.backgroundColor = 'var(--matcha-dark)';
+            btnNext.style.color = 'white';
+            
+            const idEsp = element.getAttribute('data-id');
+            document.querySelectorAll('.medico-card').forEach(c => {
+                if(c.getAttribute('data-esp') === idEsp) {
+                    c.style.display = 'block';
+                } else {
+                    c.style.display = 'none';
+                }
+            });
+            
+            document.querySelectorAll('#step2 .card-medico-v2').forEach(c => c.classList.remove('selected'));
+            document.getElementById('inputMedico').value = '';
+            document.getElementById('inputFecha').value = '';
+            document.getElementById('inputHoraHidden').value = '';
+            document.getElementById('contenedorHoras').innerHTML = '<div class="text-muted small w-100">Seleccione primero una fecha para ver los horarios.</div>';
+            
+            if (flatpickrInstance) {
+                flatpickrInstance.destroy();
+                document.getElementById('inputFecha').value = "";
+                document.getElementById('inputFecha').placeholder = "Selecciona un doctor primero...";
+            }
+            
+            document.getElementById('alertaHorario').style.display = 'none';
+            checkStep2();
+        }
+
+        function selectMedico(element) {
+            document.querySelectorAll('#step2 .card-medico-v2').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('inputMedico').value = element.getAttribute('data-id');
+            medName = element.getAttribute('data-name');
+            
+            const diasJava = element.getAttribute('data-dias').split(',').map(Number);
+            const diasFlat = diasJava.map(d => d === 7 ? 0 : d);
+            
+            document.getElementById('inputFecha').placeholder = "Elige un día en el calendario...";
+            
+            if (flatpickrInstance) {
+                flatpickrInstance.destroy();
+            }
+            
+            flatpickrInstance = flatpickr("#inputFecha", {
+                locale: "es",
+                minDate: "today",
+                maxDate: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+                inline: true, // Para mostrarlo bonito dentro de la caja gris
+                disable: [
+                    function(date) {
+                        return !diasFlat.includes(date.getDay());
+                    }
+                ],
+                onChange: function(selectedDates, dateStr, instance) {
+                    cargarHorariosDisponibles();
+                }
+            });
+            
+            if (document.getElementById('inputFecha').value !== '') {
+                cargarHorariosDisponibles();
+            }
+            checkStep2();
+        }
+
+        function seleccionarHora(btn, hora) {
+            document.querySelectorAll('.btn-hora-v2').forEach(b => {
+                b.classList.remove('active');
+            });
+            btn.classList.add('active');
+            
+            document.getElementById('inputHoraHidden').value = hora;
+            checkStep2();
+        }
+
+        function cargarHorariosDisponibles() {
+            const idMedico = document.getElementById('inputMedico').value;
+            const fecha = document.getElementById('inputFecha').value;
+            const contenedorHoras = document.getElementById('contenedorHoras');
+            const alerta = document.getElementById('alertaHorario');
+            
+            document.getElementById('inputHoraHidden').value = '';
+            
+            if (!idMedico || !fecha) return;
+
+            contenedorHoras.innerHTML = '<div class="spinner-border spinner-border-sm text-success" role="status"></div> <span class="text-muted small ms-2">Cargando...</span>';
+            alerta.style.display = 'none';
+            checkStep2();
+
+            fetch(`/api/citas/disponibles?idMedico=${idMedico}&fecha=${fecha}`)
+                .then(response => response.json())
+                .then(data => {
+                    contenedorHoras.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        contenedorHoras.innerHTML = '<div class="text-muted small w-100">No hay horarios disponibles para este día.</div>';
+                        alerta.style.display = 'block';
+                    } else {
+                        data.forEach(item => {
+                            let btn = document.createElement('button');
+                            btn.type = 'button';
+                            let horaCorta = item.hora.substring(0, 5);
+                            
+                            // Formato AM/PM
+                            let hour = parseInt(horaCorta.split(':')[0]);
+                            let min = horaCorta.split(':')[1];
+                            let ampm = hour >= 12 ? 'PM' : 'AM';
+                            hour = hour % 12;
+                            hour = hour ? hour : 12; 
+                            let displayHour = (hour < 10 ? '0' + hour : hour) + ':' + min + ' ' + ampm;
+                            
+                            btn.innerText = displayHour;
+                            
+                            if (!item.disponible) {
+                                btn.className = 'btn btn-hora-v2';
+                                btn.disabled = true;
+                            } else {
+                                btn.className = 'btn btn-hora-v2';
+                                btn.onclick = function() { seleccionarHora(this, item.hora); };
+                            }
+                            contenedorHoras.appendChild(btn);
+                        });
+                        
+                        // Añadir texto pequeño al final
+                        let nota = document.createElement('div');
+                        nota.className = 'w-100 mt-2 text-muted fst-italic';
+                        nota.style.fontSize = '11px';
+                        nota.innerText = '* La cita tiene una duración aproximada de 30 minutos.';
+                        contenedorHoras.appendChild(nota);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al cargar horarios:', error);
+                    contenedorHoras.innerHTML = '<div class="text-danger small w-100">Error de conexión</div>';
+                });
+        }
+
+        function checkStep2() {
+            const med = document.getElementById('inputMedico').value;
+            const date = document.getElementById('inputFecha').value;
+            const time = document.getElementById('inputHoraHidden').value;
+            
+            let btnNext = document.getElementById('btnNext2');
+            if(med && date && time) {
+                btnNext.disabled = false;
+                btnNext.style.backgroundColor = 'var(--matcha-dark)';
+                btnNext.style.color = 'white';
+            } else {
+                btnNext.disabled = true;
+                btnNext.style.backgroundColor = '#e0e0e0';
+                btnNext.style.color = '#888';
+            }
+        }
+
+        function nextStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            
+            if(step === 2) {
+                document.getElementById('indicator-1').classList.add('completed');
+                document.getElementById('indicator-1').innerHTML = '<i class="bi bi-check fs-4"></i>';
+                document.getElementById('line-1').classList.add('active');
+                
+                document.getElementById('indicator-2').classList.add('active');
+                document.getElementById('label-2').classList.add('active');
+            }
+            if(step === 3) {
+                document.getElementById('indicator-2').classList.add('completed');
+                document.getElementById('indicator-2').innerHTML = '<i class="bi bi-check fs-4"></i>';
+                document.getElementById('line-2').classList.add('active');
+                
+                document.getElementById('indicator-3').classList.add('active');
+                document.getElementById('label-3').classList.add('active');
+                
+                document.getElementById('resumenEspecialidad').innerText = espName;
+                document.getElementById('resumenIconoEspecialidad').innerHTML = espIconHtml;
+                document.getElementById('resumenMedico').innerText = medName;
+                
+                const fechaRaw = document.getElementById('inputFecha').value;
+                const partes = fechaRaw.split('-');
+                document.getElementById('resumenFecha').innerText = partes[2] + '/' + partes[1] + '/' + partes[0];
+                
+                // Formatear hora resumen
+                let horaVal = document.getElementById('inputHoraHidden').value.substring(0, 5);
+                let hour = parseInt(horaVal.split(':')[0]);
+                let min = horaVal.split(':')[1];
+                let ampm = hour >= 12 ? 'PM' : 'AM';
+                hour = hour % 12;
+                hour = hour ? hour : 12; 
+                document.getElementById('resumenHora').innerText = (hour < 10 ? '0'+hour : hour) + ':' + min + ' ' + ampm;
+                
+                const tarifaBase = tarifaSeleccionada;
+                document.getElementById('tarifaBaseMonto').innerText = 'S/ ' + tarifaBase.toFixed(2);
+                
+                const porcentajeDescuento = /*[[${descuentoSeguro}]]*/ 0;
+                const tipoSeguroStr = /*[[${tipoSeguro}]]*/ 'Ninguno';
+                
+                if (porcentajeDescuento > 0) {
+                    const montoDescuento = tarifaBase * porcentajeDescuento;
+                    const costoFinal = tarifaBase - montoDescuento;
+                    
+                    document.getElementById('coberturaSeguroContainer').classList.remove('d-none');
+                    document.getElementById('coberturaSeguroContainer').classList.add('d-flex');
+                    document.getElementById('montoDescuento').innerText = '- S/ ' + montoDescuento.toFixed(2);
+                    document.getElementById('totalPagar').innerText = 'S/ ' + costoFinal.toFixed(2);
+                } else {
+                    document.getElementById('coberturaSeguroContainer').classList.remove('d-flex');
+                    document.getElementById('coberturaSeguroContainer').classList.add('d-none');
+                    document.getElementById('totalPagar').innerText = 'S/ ' + tarifaBase.toFixed(2);
+                }
+            }
+        }
+
+        function prevStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(el => el.classList.remove('active'));
+            document.getElementById('step' + step).classList.add('active');
+            
+            if(step === 1) {
+                document.getElementById('indicator-1').classList.remove('completed');
+                document.getElementById('indicator-1').innerHTML = '1';
+                document.getElementById('line-1').classList.remove('active');
+                
+                document.getElementById('indicator-2').classList.remove('active');
+                document.getElementById('label-2').classList.remove('active');
+            }
+            if(step === 2) {
+                document.getElementById('indicator-2').classList.remove('completed');
+                document.getElementById('indicator-2').innerHTML = '2';
+                document.getElementById('line-2').classList.remove('active');
+                
+                document.getElementById('indicator-3').classList.remove('active');
+                document.getElementById('label-3').classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

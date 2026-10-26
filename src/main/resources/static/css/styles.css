@@ -1,0 +1,346 @@
+/* ==========================================================================
+   CLÍNICA LIMATAMBO - ESTILOS INSTITUCIONALES (PALETA AZUL SALUD)
+   ========================================================================== */
+
+/* 1. VARIABLES Y ESTILOS GENERALES (AZUL CORPORATIVO / SALUD) */
+:root {
+    --primary-blue: #0056b3;
+    --primary-blue-dark: #002d62;
+    --primary-blue-soft: #e7f1ff;
+    --primary-blue-light: #0d6efd;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --bg-light: #f8fafc;
+    --bg-alt: #f1f5f9;
+
+    /* Compatibilidad */
+    --matcha-main: #0056b3;
+    --matcha-dark: #002d62;
+    --matcha-soft: #e7f1ff;
+    --matcha-light: #0d6efd;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+    scroll-behavior: smooth;
+}
+
+/* 2. BARRA DE NAVEGACIÓN */
+.navbar-limatambo {
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 86, 179, 0.15);
+}
+
+.brand-logo {
+    font-weight: 800;
+    color: var(--primary-blue-dark);
+    font-size: 1.35rem;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brand-logo span {
+    color: var(--primary-blue);
+}
+
+.nav-link-custom {
+    color: #4B5563;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.nav-link-custom:hover {
+    color: var(--primary-blue);
+    background: var(--primary-blue-soft);
+}
+
+.btn-reserva-nav {
+    background: var(--primary-blue);
+    color: #fff !important;
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 8px 22px;
+    border: none;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.btn-reserva-nav:hover {
+    background: var(--primary-blue-dark);
+    transform: translateY(-1px);
+}
+
+.btn-login-nav {
+    border: 1.5px solid var(--primary-blue);
+    color: var(--primary-blue);
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 7px 18px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-login-nav:hover {
+    background: var(--primary-blue-soft);
+    color: var(--primary-blue-dark);
+}
+
+/* 3. SECCIÓN HERO */
+.hero-section {
+    background: linear-gradient(135deg, #002d62 0%, #0056b3 100%);
+    color: #fff;
+    padding: 100px 0 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50%;
+    top: -100px;
+    right: -100px;
+    pointer-events: none;
+}
+
+.hero-badge {
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(4px);
+}
+
+.hero-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-top: 15px;
+}
+
+.hero-desc {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    max-width: 580px;
+    margin: 15px auto 30px;
+}
+
+.btn-hero-main {
+    background: #fff;
+    color: var(--matcha-dark);
+    font-weight: 700;
+    border-radius: 50px;
+    padding: 12px 30px;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
+}
+
+.btn-hero-main:hover {
+    background: var(--matcha-soft);
+    color: var(--matcha-dark);
+    transform: translateY(-2px);
+}
+
+.btn-hero-alt {
+    background: transparent;
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    border-radius: 50px;
+    padding: 11px 26px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.btn-hero-alt:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+/* 4. BARRA DE ESTADÍSTICAS */
+.stats-bar {
+    background: var(--matcha-dark);
+    color: #fff;
+    padding: 24px 0;
+}
+
+.stat-item h3 {
+    color: var(--matcha-main);
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 2px;
+}
+
+.stat-item p {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    margin: 0;
+}
+
+/* 5. TÍTULOS Y CABECERAS DE SECCIÓN */
+.section-tag {
+    color: var(--matcha-main);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+}
+
+.section-title {
+    color: var(--matcha-dark);
+    font-weight: 800;
+    font-size: 2rem;
+}
+
+.section-divider {
+    width: 50px;
+    height: 4px;
+    background: var(--matcha-main);
+    border-radius: 4px;
+    margin: 10px auto 20px;
+}
+
+/* 6. TARJETAS DE ESPECIALIDADES */
+.spec-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 28px 20px;
+    text-align: center;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    height: 100%;
+}
+
+.spec-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 86, 179, 0.18);
+    border-color: var(--matcha-main);
+}
+
+.spec-icon-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--matcha-soft);
+    color: var(--matcha-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin: 0 auto 16px;
+}
+
+/* 7. TARJETAS DE MÉDICOS */
+.doc-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    height: 100%;
+}
+
+.doc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.doc-avatar {
+    width: 65px;
+    height: 65px;
+    background: var(--matcha-soft);
+    color: var(--matcha-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    border: 2px solid var(--matcha-main);
+}
+
+.btn-agenda-doc {
+    background: var(--matcha-soft);
+    color: var(--matcha-dark);
+    border-radius: 8px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.btn-agenda-doc:hover {
+    background: var(--matcha-main);
+    color: #fff;
+}
+
+/* 8. TARJETAS DE SEDES */
+.sede-card {
+    background: #fff;
+    border-radius: 14px;
+    border: none;
+    border-top: 4px solid var(--matcha-main);
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    height: 100%;
+}
+
+/* 9. FOOTER */
+footer {
+    background: var(--matcha-dark);
+    color: rgba(255, 255, 255, 0.8);
+    padding: 50px 0 25px;
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+footer a:hover {
+    color: #fff;
+}
+
+/* 10. BOTÓN FLOTANTE WHATSAPP */
+.whatsapp-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 55px;
+    height: 55px;
+    background: #25D366;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    text-decoration: none;
+    z-index: 1000;
+    transition: all 0.25s ease;
+}
+
+.whatsapp-btn:hover {
+    transform: scale(1.08);
+    color: #fff;
+}

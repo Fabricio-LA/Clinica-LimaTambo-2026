@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Citas | Administración</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilos-clinica.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .admin-sidebar { 
+            background: linear-gradient(180deg, var(--matcha-dark) 0%, #1a251c 100%);
+            min-height: calc(100vh - 60px); 
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .nav-link.admin-link { color: rgba(255,255,255,.7); transition: all 0.3s; padding: 12px 20px; margin: 4px 10px; border-radius: 8px;}
+        .nav-link.admin-link:hover { color: #fff; background: rgba(255,255,255,.1); transform: translateX(5px); }
+        .nav-link.admin-link.active { color: #fff; background: var(--matcha-main); font-weight: 600; box-shadow: 0 4px 10px rgba(88,129,87,0.3); }
+        
+        .table-custom { border-collapse: separate; border-spacing: 0 10px; }
+        .table-custom tr { background-color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.02); transition: transform 0.2s; }
+        .table-custom tr:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .table-custom td, .table-custom th { border: none; padding: 16px; vertical-align: middle; }
+        .table-custom th { background: transparent; color: #6c757d; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .table-custom td:first-child, .table-custom th:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        .table-custom td:last-child, .table-custom th:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+    </style>
+</head>
+
+<body class="bg-light" style="font-family: 'Poppins', sans-serif;">
+
+<nav class="navbar navbar-expand-lg navbar-dark border-bottom sticky-top" style="background-color: var(--matcha-dark);">
+    <div class="container-fluid mx-3">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+            <img th:src="@{/images/LOGO_LIMATAMBO_ALTOCONTRASTE.png}" alt="Logo Limatambo" height="40" class="d-inline-block align-text-top" style="transform: scale(4.8) translateY(1px); transform-origin: left center;">
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto align-items-center d-none d-lg-flex gap-4">
+                <li class="nav-item d-flex align-items-center">
+                    <a class="nav-link fw-bold px-0 text-white" th:href="@{/}" style="border-bottom: 2px solid white; line-height: 1;">Inicio</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center gap-2 mt-3 mt-lg-0">
+                <li class="nav-item d-lg-none w-100 text-center"><a class="nav-link text-white fw-semibold" th:href="@{/}"><i class="bi bi-house me-1"></i> Inicio</a></li>
+                <li class="nav-item d-flex align-items-center">
+                    <span class="text-white fw-semibold d-flex align-items-center" style="font-size: 0.95rem; margin-right: 1.5rem;">
+                        <i class="bi bi-person-circle fs-5 text-white align-middle" style="margin-right: 10px !important;"></i> 
+                        <span sec:authentication="name">admin</span>
+                    </span>
+                    <form th:action="@{/logout}" method="post" class="m-0 d-flex align-items-center">
+                        <button type="submit" class="btn btn-link text-decoration-none fw-bold px-0 m-0" style="color: #ff9b9b; font-size: 0.95rem;">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- SIDEBAR -->
+        <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar collapse p-0 pt-3">
+            <div class="position-sticky">
+                <p class="text-white opacity-75 small text-uppercase px-4 mb-2 fw-bold tracking-wider">Gestión Principal</p>
+                <ul class="nav flex-column mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link admin-link" th:href="@{/admin/dashboard}"><i class="bi bi-grid-1x2-fill me-2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link admin-link active" th:href="@{/admin/citas}"><i class="bi bi-calendar-check-fill me-2"></i> Control de Citas</a>
+                    </li>
+                </ul>
+                
+                <p class="text-white opacity-75 small text-uppercase px-4 mb-2 fw-bold tracking-wider">Módulos Administrativos</p>
+                <ul class="nav flex-column mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link admin-link" th:href="@{/admin/usuarios}"><i class="bi bi-people-fill me-2"></i> Personal y Usuarios</a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-5 pt-4 pb-5">
+            <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+                <div>
+                    <h2 class="fw-bold mb-0 text-dark">Control General de Citas</h2>
+                    <p class="text-muted small mb-0">Gestiona las reservas de todos los médicos</p>
+                </div>
+                <div>
+                    <button class="btn btn-reservar px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#nuevaCitaModal"><i class="bi bi-plus-lg me-2"></i> Nueva Cita (Presencial)</button>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="modern-card border-0 shadow-sm rounded-4 mb-4 p-3">
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        <label class="form-label small fw-bold text-muted">Fecha</label>
+                        <input type="text" id="filtroFecha" class="form-control bg-light border-0" placeholder="Ej: 2026-07-01 to 2026-07-15">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Médico</label>
+                        <input type="text" id="filtroMedico" class="form-control bg-light border-0" placeholder="Nombre del Médico...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label small fw-bold text-muted">Buscar Paciente</label>
+                        <input type="text" id="filtroPaciente" class="form-control bg-light border-0" placeholder="Nombre o DNI...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small fw-bold text-muted">Estado</label>
+                        <select id="filtroEstado" class="form-control bg-light border-0" style="appearance: auto; cursor: pointer;">
+                            <option value="">Todos</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="confirmada">Confirmadas</option>
+                            <option value="atendida">Atendidas / Completadas</option>
+                            <option value="cancelada">Canceladas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-outline-secondary w-100" id="btnLimpiar">Limpiar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertas de éxito y error -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show rounded-pill" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show rounded-pill" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- Tabla de Citas -->
+            <div class="table-responsive">
+                <table class="table table-custom table-custom">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha y Hora</th>
+                            <th>Paciente</th>
+                            <th>Médico</th>
+                            <th>Estado</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="dto : ${citas}">
+                            <td class="fw-bold text-muted">#<span th:text="${dto.cita.idCita}"></span></td>
+                            <td>
+                                <div class="fw-bold text-dark" th:text="${dto.cita.fechaCita}"></div>
+                                <div class="small text-muted" th:text="${dto.cita.horaCita}"></div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark" th:text="${dto.nombrePaciente}"></div>
+                                <div class="small text-muted" th:if="${dto.paciente != null}">DNI: <span th:text="${dto.paciente.dni}"></span></div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark" th:text="${dto.nombreMedico}"></div>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill px-3 py-2" 
+                                      th:classappend="${dto.cita.estado == 'Pendiente'} ? 'bg-warning text-dark' : (${dto.cita.estado == 'Completada' || dto.cita.estado == 'Atendida' || dto.cita.estado == 'Confirmada'} ? 'bg-success' : 'bg-danger')"
+                                      th:text="${dto.cita.estado}"></span>
+                            </td>
+                            <td class="text-end">
+                                <button class="btn btn-sm btn-light text-primary rounded-circle me-1"
+                                        title="Editar"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editCitaModal"
+                                        th:data-id="${dto.cita.idCita}"
+                                        th:data-fecha="${dto.cita.fechaCita}"
+                                        th:data-hora="${dto.cita.horaCita}"
+                                        th:data-paciente="${dto.nombrePaciente}"
+                                        th:if="${dto.cita.estado == 'Pendiente'}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+
+                                <form th:action="@{/admin/citas/confirmar}" method="post" class="d-inline" th:if="${dto.puedeConfirmar}">
+                                    <input type="hidden" name="idCita" th:value="${dto.cita.idCita}">
+                                    <button type="submit" class="btn btn-sm btn-light text-success rounded-circle me-1" title="Confirmar Cita" onclick="return confirm('¿Marcar como confirmada y notificar al paciente?');"><i class="bi bi-check-circle-fill"></i></button>
+                                </form>
+
+                                <form th:action="@{/admin/citas/cancelar}" method="post" class="d-inline" th:if="${dto.cita.estado == 'Pendiente'}">
+                                    <input type="hidden" name="idCita" th:value="${dto.cita.idCita}">
+                                    <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle" title="Cancelar"><i class="bi bi-x-circle"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(citas)}">
+                            <td colspan="5" class="text-center py-5 text-muted">No hay citas registradas en el sistema.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<!-- Modal Nueva Cita (Presencial) -->
+<div class="modal fade" id="nuevaCitaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light border-0 p-4">
+        <h5 class="modal-title fw-bold text-dark fs-4"><i class="bi bi-calendar-plus text-success me-2"></i>Agendar Nueva Cita</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form th:action="@{/admin/citas/nueva}" method="post">
+          <div class="modal-body p-5">
+            <div class="mb-4">
+                <label class="form-label fw-bold text-muted">Paciente</label>
+                <select class="form-select form-select-lg bg-light border-0" name="idPaciente" required>
+                    <option value="" selected disabled>Seleccione un paciente...</option>
+                    <option th:each="p : ${pacientes}" th:value="${p.idPaciente}" th:text="${p.nombre + ' ' + p.apellido + ' (DNI: ' + p.dni + ')'}"></option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold text-muted">Médico</label>
+                <select class="form-select form-select-lg bg-light border-0" name="idMedico" id="nuevaCitaMedico" required>
+                    <option value="" selected disabled>Seleccione un médico...</option>
+                    <option th:each="m : ${medicos}" th:value="${m.idMedico}" th:data-dias="${m.diasLaborables}" th:text="${'Dr. ' + m.nombre + ' ' + m.apellido}"></option>
+                </select>
+            </div>
+            <div class="row g-4 mt-1">
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold text-muted">Fecha</label>
+                    <input type="text" class="form-control form-control-lg bg-light border-0" name="fechaCita" id="nuevaCitaFecha" placeholder="Seleccione un médico primero..." required readonly>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label class="form-label fw-bold text-muted">Hora</label>
+                    <select class="form-select form-select-lg bg-light border-0" name="horaCita" id="nuevaCitaHora" required disabled>
+                        <option value="">Seleccione una fecha primero...</option>
+                    </select>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 bg-light p-4">
+            <button type="button" class="btn btn-light btn-lg rounded-pill px-5" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-reservar btn-lg rounded-pill px-5">Agendar Cita</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal único de Reprogramación (reutilizable) -->
+<div class="modal fade" id="editCitaModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light border-0">
+        <h5 class="modal-title fw-bold">Reprogramar Cita #<span id="editCitaId"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form th:action="@{/admin/citas/editar}" method="post">
+          <div class="modal-body text-start p-4">
+            <input type="hidden" name="idCita" id="editCitaIdInput">
+            <p class="small text-muted mb-4">Paciente: <strong id="editCitaPaciente"></strong></p>
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">Nueva Fecha</label>
+                <input type="date" class="form-control bg-light border-0" name="fechaCita" id="editCitaFecha" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-muted">Nueva Hora</label>
+                <input type="time" class="form-control bg-light border-0" name="horaCita" id="editCitaHora" required>
+            </div>
+          </div>
+          <div class="modal-footer border-0 bg-light">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary rounded-pill px-4">Guardar Cambios</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('editCitaModal').addEventListener('show.bs.modal', function(event) {
+        const btn = event.relatedTarget;
+        const id = btn.getAttribute('data-id');
+        document.getElementById('editCitaId').textContent = id;
+        document.getElementById('editCitaIdInput').value = id;
+        document.getElementById('editCitaPaciente').textContent = btn.getAttribute('data-paciente');
+        document.getElementById('editCitaFecha').value = btn.getAttribute('data-fecha');
+        document.getElementById('editCitaHora').value = btn.getAttribute('data-hora');
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const filtroFecha = document.getElementById('filtroFecha');
+        const filtroMedico = document.getElementById('filtroMedico');
+        const filtroPaciente = document.getElementById('filtroPaciente');
+        const filtroEstado = document.getElementById('filtroEstado');
+        const btnLimpiar = document.getElementById('btnLimpiar');
+
+        function filtrarCitas() {
+            const valFecha = filtroFecha.value;
+            const valMedico = filtroMedico.value.toLowerCase().trim();
+            const valPaciente = filtroPaciente.value.toLowerCase().trim();
+            const valEstado = filtroEstado.value.toLowerCase().trim();
+            
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                if(row.children.length === 1) return; // Skip empty message row
+
+                const fechaTexto = row.children[1].querySelector('.fw-bold').textContent;
+                const pacienteTexto = row.children[2].textContent.toLowerCase();
+                const medicoTexto = row.children[3].textContent.toLowerCase();
+                const estadoTexto = row.children[4].textContent.toLowerCase().trim();
+                
+                let matchFecha = true;
+                if (valFecha !== '') {
+                    if (valFecha.includes(' a ')) {
+                        const partes = valFecha.split(' a ');
+                        const start = partes[0];
+                        const end = partes.length > 1 ? partes[1] : start;
+                        matchFecha = fechaTexto >= start && fechaTexto <= end;
+                    } else if (valFecha.includes(' to ')) { // Flatpickr default fallback
+                        const partes = valFecha.split(' to ');
+                        const start = partes[0];
+                        const end = partes.length > 1 ? partes[1] : start;
+                        matchFecha = fechaTexto >= start && fechaTexto <= end;
+                    } else {
+                        matchFecha = fechaTexto === valFecha;
+                    }
+                }
+                
+                let matchMedico = valMedico === '' || medicoTexto.includes(valMedico);
+                let matchPaciente = valPaciente === '' || pacienteTexto.includes(valPaciente);
+                
+                let matchEstado = true;
+                if (valEstado !== '') {
+                    if (valEstado === 'atendida') {
+                        matchEstado = estadoTexto.includes('atendida') || estadoTexto.includes('completada');
+                    } else {
+                        matchEstado = estadoTexto.includes(valEstado);
+                    }
+                }
+
+                if (matchFecha && matchMedico && matchPaciente && matchEstado) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        filtroFecha.addEventListener('change', filtrarCitas);
+        filtroMedico.addEventListener('input', filtrarCitas);
+        filtroPaciente.addEventListener('input', filtrarCitas);
+        filtroEstado.addEventListener('change', filtrarCitas);
+        
+        btnLimpiar.addEventListener('click', function() {
+            if (filtroFecha._flatpickr) {
+                filtroFecha._flatpickr.clear();
+            } else {
+                filtroFecha.value = '';
+            }
+            filtroMedico.value = '';
+            filtroPaciente.value = '';
+            filtroEstado.value = '';
+            filtrarCitas();
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        flatpickr("#filtroFecha", {
+            mode: "range",
+            locale: "es",
+            dateFormat: "Y-m-d",
+            placeholder: "Rango de fechas"
+        });
+    });
+
+    let fpInstance = null;
+    document.getElementById('nuevaCitaMedico').addEventListener('change', function() {
+        const option = this.options[this.selectedIndex];
+        const diasStr = option.getAttribute('data-dias');
+        const fechaInput = document.getElementById('nuevaCitaFecha');
+        const horaSelect = document.getElementById('nuevaCitaHora');
+        
+        fechaInput.value = '';
+        horaSelect.innerHTML = '<option value="">Seleccione una fecha primero...</option>';
+        horaSelect.disabled = true;
+        
+        if (!diasStr || diasStr === 'null') {
+            fechaInput.placeholder = "Médico sin horarios configurados";
+            if(fpInstance) fpInstance.destroy();
+            return;
+        }
+        
+        const diasJava = diasStr.split(',').map(Number);
+        const diasFlat = diasJava.map(d => d === 7 ? 0 : d);
+        
+        fechaInput.placeholder = "Seleccione una fecha...";
+        
+        if (fpInstance) fpInstance.destroy();
+        fpInstance = flatpickr("#nuevaCitaFecha", {
+            locale: "es",
+            minDate: "today",
+            disable: [
+                function(date) {
+                    return !diasFlat.includes(date.getDay());
+                }
+            ],
+            onChange: function(selectedDates, dateStr, instance) {
+                horaSelect.innerHTML = '<option value="">Cargando horarios...</option>';
+                horaSelect.disabled = true;
+                
+                fetch(`/api/citas/disponibles?idMedico=${option.value}&fecha=${dateStr}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        horaSelect.innerHTML = '<option value="">Seleccione una hora...</option>';
+                        if (data.length === 0) {
+                            horaSelect.innerHTML = '<option value="">No hay horarios disponibles</option>';
+                        } else {
+                            data.forEach(item => {
+                                let opt = document.createElement('option');
+                                opt.value = item.hora.substring(0, 5);
+                                opt.text = item.hora.substring(0, 5) + (item.disponible ? '' : ' (Ocupado)');
+                                opt.disabled = !item.disponible;
+                                horaSelect.appendChild(opt);
+                            });
+                            horaSelect.disabled = false;
+                        }
+                    })
+                    .catch(e => {
+                        horaSelect.innerHTML = '<option value="">Error de conexión</option>';
+                    });
+            }
+        });
+    });
+</script>
+</body>
+</html>

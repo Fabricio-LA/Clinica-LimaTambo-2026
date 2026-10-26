@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Médico | Clínica Limatambo</title>
+    
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilos-clinica.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light navbar-clinica sticky-top shadow-sm bg-white">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+                <img th:src="@{/images/LOGO_LIMATAMBO.png}" alt="Logo Limatambo" height="40" class="d-inline-block align-text-top" style="transform: scale(4.8) translateY(1px); transform-origin: left center;">
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto align-items-center d-none d-lg-flex gap-4">
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link fw-bold px-0" th:href="@{/}" style="color: var(--matcha-dark); border-bottom: 2px solid var(--matcha-dark); line-height: 1;">Inicio</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto align-items-center gap-2 mt-3 mt-lg-0">
+                    <li class="nav-item d-lg-none w-100 text-center"><a class="nav-link text-dark fw-semibold" th:href="@{/}"><i class="bi bi-house me-1"></i> Inicio</a></li>
+                    
+                    <li class="nav-item d-flex align-items-center">
+                        <span class="text-dark fw-semibold d-flex align-items-center" style="font-size: 0.95rem; margin-right: 1.5rem;">
+                            <i class="bi bi-person-circle fs-5 text-dark align-middle" style="margin-right: 10px !important;"></i> 
+                            Dr. <span th:text="${medico != null ? #strings.arraySplit(medico.nombre, ' ')[0] + ' ' + #strings.arraySplit(medico.apellido, ' ')[0] : 'Médico'}">Médico</span>
+                        </span>
+                        <form th:action="@{/logout}" method="post" class="m-0 d-flex align-items-center">
+                            <button type="submit" class="btn btn-link text-decoration-none fw-bold px-0 m-0" style="color: #c45b5b; font-size: 0.95rem;">Cerrar Sesión</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <!-- Perfil Médico -->
+                <div class="modern-card border shadow-sm rounded-4 p-4 mb-4 text-center bg-white" style="border-color: #eaeaea !important;">
+                    <div class="position-relative d-inline-block mb-3">
+                        <img th:src="@{/images/doctores/} + ${medico.fotoPerfil != null ? medico.fotoPerfil : 'default-doctor.png'}" 
+                             alt="Doctor" class="rounded-circle border" style="width: 90px; height: 90px; object-fit: cover; border-color: #eaeaea !important; padding: 2px;">
+                        <i class="bi bi-check-circle-fill text-success position-absolute" style="bottom: 0; right: 0; font-size: 1.2rem; background: white; border-radius: 50%;"></i>
+                    </div>
+                    <h5 class="fw-bold mb-1 text-dark">Dr. <span th:text="${medico.nombre + ' ' + medico.apellido}">Nombre</span></h5>
+                    <p class="text-muted small mb-3" th:text="${especialidadNombre}">Especialidad</p>
+                    
+                    <hr class="border-light opacity-50">
+                    
+                    <div class="d-flex justify-content-center text-center mt-3">
+                        <div>
+                            <small class="text-muted fw-bold" style="font-size: 10px; letter-spacing: 1px;">CITAS HOY</small>
+                            <h3 class="fw-bold mb-0" style="color: var(--matcha-dark);" th:text="${totalCitasHoy}">0</h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Mi Horario -->
+                <div class="modern-card border shadow-sm rounded-4 p-4 mb-4 bg-white" style="border-color: #eaeaea !important;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h6 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-clock me-2" style="color: var(--matcha-dark);"></i>Mi Horario
+                        </h6>
+                        <button class="btn btn-sm text-dark p-0" data-bs-toggle="modal" data-bs-target="#modalHorario">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="small text-muted">Días:</span>
+                        <span class="small text-dark" th:text="${medico.diasLaborablesTexto}">Lun - Vie</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span class="small text-muted">Horas:</span>
+                        <span class="small fw-bold" style="color: var(--matcha-dark);" th:text="${medico.horaInicio + ' - ' + medico.horaFin}">08:00 - 14:00</span>
+                    </div>
+                </div>
+
+                <!-- Alertas Recientes -->
+                <div class="modern-card border shadow-sm rounded-4 p-0 overflow-hidden" style="background-color: #fff9e6; border-color: #f1ddb0 !important;">
+                    <div class="p-3 border-bottom" style="background-color: #ffc107; border-color: #f1ddb0 !important;">
+                        <h6 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-exclamation-triangle" style="margin-right: 12px;"></i>Alertas Recientes
+                        </h6>
+                    </div>
+                    <div class="p-3">
+                        <div th:if="${#lists.isEmpty(alertasHoy)}" class="text-center py-2">
+                            <small class="text-muted">No hay cancelaciones para el día de hoy.</small>
+                        </div>
+                        <div class="d-flex flex-column gap-2" th:if="${not #lists.isEmpty(alertasHoy)}">
+                            <div th:each="alerta : ${alertasHoy}" class="mb-0 small d-flex flex-column rounded-3 position-relative">
+                                <div class="d-flex align-items-start">
+                                    <i class="bi bi-exclamation-circle text-warning mt-1" style="margin-right: 12px;"></i>
+                                    <div class="pe-1 text-dark" style="font-size: 13px;">
+                                        <strong th:text="${alerta.nombrePaciente}">Paciente</strong> ha modificado o cancelado su cita del <strong th:text="${alerta.cita.fechaCita}"></strong> a las <strong th:text="${alerta.cita.horaCita}">00:00</strong>.
+                                    </div>
+                                </div>
+                                <div class="text-end mt-2">
+                                    <form th:action="@{/citas/descartar-alerta/{id}(id=${alerta.cita.idCita})}" method="post" class="m-0">
+                                        <button type="submit" class="btn btn-sm btn-link p-0 text-decoration-none" style="color: #f39c12; font-size: 12px;">Marcar como leído</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <h4 class="fw-bold mb-4" style="color: var(--matcha-dark)">Agenda de Hoy</h4>
+                
+                <div th:if="${param.horarioActualizado}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3">
+                    <i class="bi bi-check-circle-fill me-2"></i>Horario actualizado correctamente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${param.canceladaUrgencia}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3" style="background-color: #d1e7dd; color: #0f5132;">
+                    <i class="bi bi-envelope-check-fill me-2"></i>Cita cancelada. Se ha enviado un correo al paciente con un enlace para reprogramar.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${param.atendida}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm rounded-3">
+                    <i class="bi bi-check-circle-fill me-2"></i>Cita marcada como completada.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <div th:if="${param.ausente}" class="alert alert-warning alert-dismissible fade show border-0 shadow-sm rounded-3">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>Paciente marcado como ausente.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div th:if="${#lists.isEmpty(citasHoy)}" class="modern-card border shadow-sm rounded-4 p-5 text-center bg-white" style="border-color: #eaeaea !important;">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3 mx-auto" style="width: 70px; height: 70px; background-color: #e8f5e9;">
+                        <i class="bi bi-calendar-check fs-2" style="color: var(--matcha-main);"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-1">Agenda libre</h5>
+                    <p class="text-muted small mb-0">No tienes pacientes programados para este momento del día.</p>
+                </div>
+
+                <div class="d-flex flex-column gap-3">
+                    <div th:each="dto : ${citasHoy}">
+                        <div class="modern-card border shadow-sm rounded-3 p-3 bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center" th:classappend="${dto.cita.estado == 'Atendida' || dto.cita.estado == 'Ausente'} ? 'opacity-50' : ''" style="border-color: #eaeaea !important;">
+                            
+                            <!-- Left info -->
+                            <div class="d-flex align-items-center mb-3 mb-md-0" style="gap: 24px;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px; background-color: #eef2e6;">
+                                    <i class="bi bi-person fs-4" style="color: #5c6c4c;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark" th:text="${dto.nombrePaciente}">Nombre Paciente</h6>
+                                    <small class="text-muted" th:text="'DNI: ' + ${dto.paciente != null ? dto.paciente.dni : '-'} + ' • Edad: ' + ${dto.edadPaciente != null ? dto.edadPaciente + ' años' : '-'}">DNI | Edad</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Right info & actions -->
+                            <div class="d-flex flex-column align-items-md-end gap-2">
+                                <div class="text-dark small d-flex flex-column text-md-end mb-2 mb-md-0">
+                                    <span><i class="bi bi-calendar3" style="margin-right: 12px;"></i><span th:text="${dto.cita.fechaCita}"></span></span>
+                                    <span><i class="bi bi-clock" style="margin-right: 12px;"></i><span th:text="${dto.cita.horaCita}">11:00</span></span>
+                                </div>
+                                
+                                <div class="d-flex align-items-center flex-wrap justify-content-md-end" style="gap: 16px;">
+                                    <span th:if="${dto.cita.estado == 'Pendiente'}" class="badge bg-warning text-dark border-0 rounded-pill px-3 py-2"><i class="bi bi-clock-history" style="margin-right: 8px;"></i>Pendiente</span>
+                                    <span th:if="${dto.cita.estado == 'Confirmada'}" class="badge bg-success border-0 rounded-pill px-3 py-2"><i class="bi bi-check-circle" style="margin-right: 8px;"></i>Confirmada</span>
+                                    <span th:if="${dto.cita.estado == 'Atendida'}" class="badge bg-primary border-0 rounded-pill px-3 py-2"><i class="bi bi-clipboard-check" style="margin-right: 8px;"></i>Completada</span>
+                                    <span th:if="${dto.cita.estado == 'Ausente'}" class="badge bg-secondary border-0 rounded-pill px-3 py-2"><i class="bi bi-person-x" style="margin-right: 8px;"></i>Ausente</span>
+                                    
+                                    <button th:if="${dto.cita.estado == 'Pendiente' || dto.cita.estado == 'Confirmada'}" type="button" class="btn btn-outline-success btn-sm rounded-pill px-3 py-1" data-bs-toggle="modal" th:data-bs-target="'#atendidaModal' + ${dto.cita.idCita}">
+                                        <i class="bi bi-clipboard-check" style="margin-right: 8px;"></i> Marcar Completada
+                                    </button>
+                                    
+                                    <form th:if="${dto.cita.estado == 'Pendiente' || dto.cita.estado == 'Confirmada'}" th:action="@{/citas/estado/{id}(id=${dto.cita.idCita})}" method="post" class="m-0">
+                                        <input type="hidden" name="nuevoEstado" value="Ausente">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1" onclick="return confirm('\u00bfConfirmar que el paciente no se present\u00f3 a su consulta?');">
+                                            <i class="bi bi-person-x" style="margin-right: 8px;"></i> Ausente
+                                        </button>
+                                    </form>
+
+                                    <form th:if="${dto.cita.estado == 'Pendiente' || dto.cita.estado == 'Confirmada'}" th:action="@{/citas/estado/{id}(id=${dto.cita.idCita})}" method="post" class="m-0">
+                                        <input type="hidden" name="nuevoEstado" value="Cancelada_Medico">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1" onclick="return confirm('\u00bfSeguro que deseas cancelar esta cita por urgencia m\u00e9dica?');">
+                                            <i class="bi bi-x-circle" style="margin-right: 8px;"></i> Cancelar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Modal Detalles de Consulta -->
+                        <div class="modal fade" th:id="'atendidaModal' + ${dto.cita.idCita}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg">
+                                    <div class="modal-header bg-light">
+                                        <h5 class="modal-title fw-bold"><i class="bi bi-file-medical me-2 text-primary"></i>Detalles de la Consulta</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form th:action="@{/citas/estado/{id}(id=${dto.cita.idCita})}" method="post">
+                                        <input type="hidden" name="nuevoEstado" value="Atendida">
+                                        <div class="modal-body p-4">
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold text-secondary">Diagnóstico / Receta Médica</label>
+                                                <textarea name="detalleConsulta" class="form-control" rows="5" placeholder="Escriba aquí los detalles clínicos, recetas o recomendaciones para el paciente..." required maxlength="1000"></textarea>
+                                                <div class="form-text">Esta información será visible en el historial clínico del paciente.</div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0 pt-0">
+                                            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                                            <button type="submit" class="btn btn-primary">Guardar y Marcar Atendida</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <div class="mt-5 mb-3">
+                    <h5 class="fw-bold mb-0 text-dark">Próximas Citas</h5>
+                </div>
+                
+                <div th:if="${#lists.isEmpty(citasProximas)}" class="alert alert-light border border-success border-opacity-25 rounded-4 p-4 text-center shadow-sm">
+                    <i class="bi bi-calendar-event fs-2 text-muted mb-2 d-block"></i>
+                    <p class="text-muted small mb-0">No tienes citas programadas para el futuro.</p>
+                </div>
+                
+                <div class="d-flex flex-column gap-3">
+                    <div th:each="dto : ${citasProximas}">
+                        <div class="modern-card border shadow-sm rounded-3 p-3 bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center" style="border-color: #eaeaea !important;">
+                            
+                            <!-- Left info -->
+                            <div class="d-flex align-items-center mb-3 mb-md-0" style="gap: 24px;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 45px; height: 45px; background-color: #eef2e6;">
+                                    <i class="bi bi-person fs-4" style="color: #5c6c4c;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0 text-dark" th:text="${dto.nombrePaciente}">Nombre Paciente</h6>
+                                    <small class="text-muted" th:text="'DNI: ' + ${dto.paciente != null ? dto.paciente.dni : '-'} + ' • Edad: ' + ${dto.edadPaciente != null ? dto.edadPaciente + ' años' : '-'}">DNI | Edad</small>
+                                </div>
+                            </div>
+                            
+                            <!-- Right info & actions -->
+                            <div class="d-flex flex-column align-items-md-end gap-2">
+                                <div class="text-dark small d-flex flex-column text-md-end mb-2 mb-md-0">
+                                    <span><i class="bi bi-calendar3" style="margin-right: 12px;"></i><span th:text="${dto.cita.fechaCita}">2026-07-18</span></span>
+                                    <span><i class="bi bi-clock" style="margin-right: 12px;"></i><span th:text="${dto.cita.horaCita}">11:00</span></span>
+                                </div>
+                                <div class="d-flex align-items-center" style="gap: 16px;">
+                                    <span class="badge border-0 rounded-pill px-3 py-2" style="background-color: #eef2e6; color: #5c6c4c;"><i class="bi bi-journal-text" style="margin-right: 8px;"></i>Programada</span>
+                                    <form th:action="@{/citas/estado/{id}(id=${dto.cita.idCita})}" method="post" class="m-0">
+                                        <input type="hidden" name="nuevoEstado" value="Cancelada_Medico">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1" onclick="return confirm('\u00bfSeguro que deseas cancelar esta cita por urgencia m\u00e9dica?');">
+                                            <i class="bi bi-x-circle" style="margin-right: 8px;"></i> Cancelar por Urgencia
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mt-5 mb-3 flex-wrap gap-3">
+                    <h5 class="fw-bold mb-0 text-dark">Historial de Pacientes Atendidos</h5>
+                    <div class="input-group input-group-sm border rounded-3 overflow-hidden" style="max-width: 250px; background-color: #f9f9f9; border-color: #eaeaea !important;">
+                        <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" id="buscadorAtendidas" class="form-control bg-transparent border-0 shadow-none px-0" placeholder="Buscar por DNI o Nombre...">
+                    </div>
+                </div>
+                
+                <div th:if="${#lists.isEmpty(citasAtendidas)}" class="alert alert-light border border-secondary border-opacity-25 rounded-4 p-4 text-center shadow-sm">
+                    <i class="bi bi-journal-x fs-2 text-muted mb-2 d-block"></i>
+                    <p class="text-muted small mb-0">No hay historial de citas atendidas aún.</p>
+                </div>
+                
+                <div class="d-flex flex-column gap-3" id="listaAtendidas">
+                    <div class="cita-atendida-item" th:each="dto : ${citasAtendidas}">
+                        <div class="modern-card border shadow-sm rounded-3 p-3 bg-white" th:data-busqueda="${#strings.toLowerCase(dto.nombrePaciente + ' ' + (dto.paciente != null ? dto.paciente.dni : ''))}" style="border-color: #eaeaea !important;">
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                <div class="d-flex align-items-center" style="gap: 24px;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px; background-color: #eef2e6;">
+                                        <i class="bi bi-person fs-5" style="color: #5c6c4c;"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark" th:text="${dto.nombrePaciente}">Nombre Paciente</h6>
+                                        <small class="text-muted" style="font-size: 12px;" th:text="'DNI: ' + ${dto.paciente != null ? dto.paciente.dni : '-'} + ' • ' + ${dto.cita.fechaCita} + ' | ' + ${dto.cita.horaCita}">DNI | Fecha | Hora</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center" style="gap: 16px;">
+                                    <span class="badge bg-secondary text-white border-0 rounded-pill px-3 py-2"><i class="bi bi-check2" style="margin-right: 8px;"></i>Atendida</span>
+                                    <button type="button" th:if="${dto.cita.detalleConsulta != null}" class="btn btn-sm btn-outline-success rounded-pill px-3 py-1 fw-bold" data-bs-toggle="modal" th:data-bs-target="'#detalleModalMedico' + ${dto.cita.idCita}">
+                                        <i class="bi bi-eye" style="margin-right: 8px;"></i> Ver Detalle
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modal Detalles de Consulta -->
+                        <div class="modal fade" th:id="'detalleModalMedico' + ${dto.cita.idCita}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg">
+                                    <div class="modal-header bg-light">
+                                        <h5 class="modal-title fw-bold text-dark"><i class="bi bi-journal-medical me-2 text-primary"></i>Detalle de Consulta Atendida</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body p-4">
+                                        <h6 class="fw-bold text-secondary mb-3 border-bottom pb-2">Diagnóstico y Recomendaciones Médicas</h6>
+                                        <p class="text-dark mb-0" style="white-space: pre-wrap;" th:text="${dto.cita.detalleConsulta}"></p>
+                                    </div>
+                                    <div class="modal-footer border-0 pt-0">
+                                        <button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">Entendido</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HORARIO -->
+    <div class="modal fade" id="modalHorario" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">Modificar Horario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form th:action="@{/medico/horario}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-muted small">Días de Atención</label>
+                            <input type="hidden" id="inputDiasAtencion" name="dias" th:value="${medico.diasLaborables}" required>
+                            <div class="d-flex justify-content-between gap-1 mt-2" id="dayButtonsContainer">
+                                <button type="button" class="btn btn-outline-success rounded-circle day-btn p-0 fw-bold" style="width: 40px; height: 40px;" data-day="1">L</button>
+                                <button type="button" class="btn btn-outline-success rounded-circle day-btn p-0 fw-bold" style="width: 40px; height: 40px;" data-day="2">M</button>
+                                <button type="button" class="btn btn-outline-success rounded-circle day-btn p-0 fw-bold" style="width: 40px; height: 40px;" data-day="3">X</button>
+                                <button type="button" class="btn btn-outline-success rounded-circle day-btn p-0 fw-bold" style="width: 40px; height: 40px;" data-day="4">J</button>
+                                <button type="button" class="btn btn-outline-success rounded-circle day-btn p-0 fw-bold" style="width: 40px; height: 40px;" data-day="5">V</button>
+                                <button type="button" class="btn btn-outline-success rounded-circle day-btn p-0 fw-bold" style="width: 40px; height: 40px;" data-day="6">S</button>
+                                <button type="button" class="btn btn-outline-success rounded-circle day-btn p-0 fw-bold" style="width: 40px; height: 40px;" data-day="7">D</button>
+                            </div>
+                            <small class="text-muted d-block mt-2">Haz clic en los días para marcarlos como disponibles</small>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-muted small">Hora Inicio</label>
+                                <input type="time" class="form-control rounded-pill" name="horaInicio" th:value="${medico.horaInicio}" step="3600" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-muted small">Hora Fin</label>
+                                <input type="time" class="form-control rounded-pill" name="horaFin" th:value="${medico.horaFin}" step="3600" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-top-0 pt-0">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success rounded-pill px-4">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const buscador = document.getElementById('buscadorAtendidas');
+        if(buscador) {
+            buscador.addEventListener('input', function() {
+                const term = this.value.toLowerCase().trim();
+                const items = document.querySelectorAll('.cita-atendida-item');
+                items.forEach(item => {
+                    const card = item.querySelector('.modern-card');
+                    if (card) {
+                        const data = card.getAttribute('data-busqueda') || "";
+                        if (data.includes(term)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        }
+
+        // Lógica de botones de días
+        const inputDias = document.getElementById('inputDiasAtencion');
+        const dayButtons = document.querySelectorAll('.day-btn');
+        
+        if (inputDias && dayButtons.length > 0) {
+            // Inicializar botones según el valor actual
+            const currentDays = inputDias.value.split(',');
+            dayButtons.forEach(btn => {
+                if (currentDays.includes(btn.getAttribute('data-day'))) {
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.add('btn-success');
+                }
+                
+                // Agregar evento click
+                btn.addEventListener('click', function() {
+                    const day = this.getAttribute('data-day');
+                    if (this.classList.contains('btn-success')) {
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-outline-success');
+                    } else {
+                        this.classList.remove('btn-outline-success');
+                        this.classList.add('btn-success');
+                    }
+                    updateHiddenDias();
+                });
+            });
+            
+            function updateHiddenDias() {
+                const selected = [];
+                dayButtons.forEach(btn => {
+                    if (btn.classList.contains('btn-success')) {
+                        selected.push(btn.getAttribute('data-day'));
+                    }
+                });
+                inputDias.value = selected.join(',');
+            }
+        }
+    });
+</script>
+</body>
+</html>
+

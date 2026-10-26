@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | Clínica Limatambo</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/estilos-clinica.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-sidebar { 
+            background: linear-gradient(180deg, var(--matcha-dark) 0%, #1a251c 100%);
+            min-height: calc(100vh - 60px); 
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .nav-link.admin-link { color: rgba(255,255,255,.7); transition: all 0.3s; padding: 12px 20px; margin: 4px 10px; border-radius: 8px;}
+        .nav-link.admin-link:hover { color: #fff; background: rgba(255,255,255,.1); transform: translateX(5px); }
+        .nav-link.admin-link.active { color: #fff; background: var(--matcha-main); font-weight: 600; box-shadow: 0 4px 10px rgba(88,129,87,0.3); }
+        
+        .metric-card {
+            border-radius: 16px;
+            border: none;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .metric-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+        .metric-icon {
+            width: 60px; height: 60px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 28px;
+        }
+        
+        .chart-container {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .bg-success-light { background-color: rgba(40, 167, 69, 0.15) !important; color: #28a745 !important; }
+        .bg-primary-light { background-color: rgba(0, 123, 255, 0.15) !important; color: #007bff !important; }
+        .bg-warning-light { background-color: rgba(255, 193, 7, 0.2) !important; color: #ffc107 !important; }
+        .bg-white-light { background-color: rgba(255, 255, 255, 0.25) !important; color: #ffffff !important; }
+    </style>
+</head>
+
+<body class="bg-light" style="font-family: 'Poppins', sans-serif;">
+
+<nav class="navbar navbar-expand-lg navbar-dark border-bottom sticky-top" style="background-color: var(--matcha-dark);">
+    <div class="container-fluid mx-3">
+        <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+            <img th:src="@{/images/LOGO_LIMATAMBO_ALTOCONTRASTE.png}" alt="Logo Limatambo" height="40" class="d-inline-block align-text-top" style="transform: scale(4.8) translateY(1px); transform-origin: left center;">
+        </a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto align-items-center d-none d-lg-flex gap-4">
+                <li class="nav-item d-flex align-items-center">
+                    <a class="nav-link fw-bold px-0 text-white" th:href="@{/}" style="border-bottom: 2px solid white; line-height: 1;">Inicio</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto align-items-center gap-2 mt-3 mt-lg-0">
+                <li class="nav-item d-lg-none w-100 text-center"><a class="nav-link text-white fw-semibold" th:href="@{/}"><i class="bi bi-house me-1"></i> Inicio</a></li>
+                <li class="nav-item d-flex align-items-center">
+                    <span class="text-white fw-semibold d-flex align-items-center" style="font-size: 0.95rem; margin-right: 1.5rem;">
+                        <i class="bi bi-person-circle fs-5 text-white align-middle" style="margin-right: 10px !important;"></i> 
+                        <span sec:authentication="name">admin</span>
+                    </span>
+                    <form th:action="@{/logout}" method="post" class="m-0 d-flex align-items-center">
+                        <button type="submit" class="btn btn-link text-decoration-none fw-bold px-0 m-0" style="color: #ff9b9b; font-size: 0.95rem;">Cerrar Sesión</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- SIDEBAR -->
+        <nav class="col-md-3 col-lg-2 d-md-block admin-sidebar collapse p-0 pt-3">
+            <div class="position-sticky">
+                <p class="text-white opacity-75 small text-uppercase px-4 mb-2 fw-bold tracking-wider">Gestión Principal</p>
+                <ul class="nav flex-column mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link admin-link active" th:href="@{/admin/dashboard}"><i class="bi bi-grid-1x2-fill me-2"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link admin-link" th:href="@{/admin/citas}"><i class="bi bi-calendar-check-fill me-2"></i> Control de Citas</a>
+                    </li>
+                </ul>
+                
+                <p class="text-white opacity-75 small text-uppercase px-4 mb-2 fw-bold tracking-wider">Módulos Administrativos</p>
+                <ul class="nav flex-column mb-4">
+                    <li class="nav-item">
+                        <a class="nav-link admin-link" th:href="@{/admin/usuarios}"><i class="bi bi-people-fill me-2"></i> Personal y Usuarios</a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-5 pt-4 pb-5">
+            <div class="d-flex justify-content-between align-items-center pb-3 mb-4 border-bottom">
+                <div>
+                    <h2 class="fw-bold mb-0 text-dark">Centro de Mando</h2>
+                    <p class="text-muted small mb-0">Resumen operativo de Clínica Limatambo</p>
+                </div>
+                <div>
+                    <a href="/admin/reporte-mensual.csv" class="btn btn-success rounded-pill px-4 shadow-sm fw-bold"><i class="bi bi-file-earmark-spreadsheet-fill mr-2"></i> Reporte Mensual (Excel)</a>
+                </div>
+            </div>
+
+            <!-- METRICS WIDGETS -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon bg-success-light mr-4">
+                                <i class="bi bi-calendar2-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted small mb-1">Total Citas</h6>
+                                <h3 class="fw-bold mb-0" th:text="${totalCitas}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon bg-primary-light mr-4">
+                                <i class="bi bi-people"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted small mb-1">Pacientes Activos</h6>
+                                <h3 class="fw-bold mb-0" th:text="${totalPacientes}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon bg-warning-light mr-4">
+                                <i class="bi bi-boxes"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted small mb-1">Insumos Registrados</h6>
+                                <h3 class="fw-bold mb-0" th:text="${totalInsumos}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3" style="background: linear-gradient(135deg, var(--matcha-main), var(--matcha-dark)); color: white;">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon bg-white-light mr-4">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-white-50 small mb-1">Ingresos Mensuales</h6>
+                                <h3 class="fw-bold mb-0 text-white" th:text="'S/ ' + ${ingresosMes != null ? ingresosMes : '0.00'}">S/ 0.00</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECOND ROW METRICS -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon mr-4" style="background-color: rgba(23, 162, 184, 0.15); color: #17a2b8;">
+                                <i class="bi bi-person-badge"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted small mb-1">Doctores Activos</h6>
+                                <h3 class="fw-bold mb-0" th:text="${medicosActivos}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon bg-success-light mr-4">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted small mb-1">Citas Atendidas</h6>
+                                <h3 class="fw-bold mb-0" th:text="${citasAtendidas}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon bg-warning-light mr-4">
+                                <i class="bi bi-calendar-minus"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted small mb-1">Citas Pendientes</h6>
+                                <h3 class="fw-bold mb-0" th:text="${citasPendientes}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="modern-card metric-card shadow-sm h-100 p-3">
+                        <div class="d-flex align-items-center">
+                            <div class="metric-icon mr-4" style="background-color: rgba(220, 53, 69, 0.15); color: #dc3545;">
+                                <i class="bi bi-calendar-x"></i>
+                            </div>
+                            <div>
+                                <h6 class="text-muted small mb-1">Citas Canceladas</h6>
+                                <h3 class="fw-bold mb-0" th:text="${citasCanceladas}">0</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS SECTION -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-8">
+                    <div class="chart-container">
+                        <h6 class="fw-bold mb-4">Demanda de Citas (Últimos 7 días)</h6>
+                        <canvas id="citasChart" height="100"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container h-100">
+                        <h6 class="fw-bold mb-4">Estado de Citas (Hoy)</h6>
+                        <canvas id="estadoChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- INVENTARIO WIDGET -->
+            <div class="row g-4 mb-5">
+                <div class="col-12">
+                    <div class="chart-container">
+                        <h6 class="fw-bold mb-4">Estado del Inventario por Categoría</h6>
+                        <div class="row g-3">
+                            <div class="col-md-4" th:each="stat : ${insumosStats}">
+                                <div class="p-3 border rounded-3 position-relative bg-light">
+                                    <h6 class="fw-bold text-dark mb-2" th:text="${stat.categoria}">Categoría</h6>
+                                    <div class="d-flex justify-content-between align-items-center mb-0">
+                                        <span class="text-muted small">Total registrados: <strong class="text-dark" th:text="${stat.totalItems}">0</strong></span>
+                                        <span th:if="${stat.itemsStockBajo > 0}" class="badge bg-danger rounded-pill" th:text="${stat.itemsStockBajo} + ' en stock bajo'">0 en stock bajo</span>
+                                        <span th:if="${stat.itemsStockBajo == 0}" class="badge bg-success rounded-pill">Stock Óptimo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12" th:if="${insumosStats == null or insumosStats.isEmpty()}">
+                                <div class="text-muted text-center py-4">No hay insumos registrados en el inventario.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    // Inicializar Gráficos con datos dinámicos desde el backend
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        const chartLabelsCitas = JSON.parse(/*[[${chartLabelsCitas}]]*/ '[]');
+        const chartDataCitas = JSON.parse(/*[[${chartDataCitas}]]*/ '[]');
+        const chartDataEstados = JSON.parse(/*[[${chartDataEstados}]]*/ '[]');
+
+        // Gráfico de Líneas (Demanda de Citas)
+        const ctxCitas = document.getElementById('citasChart').getContext('2d');
+        new Chart(ctxCitas, {
+            type: 'line',
+            data: {
+                labels: chartLabelsCitas,
+                datasets: [{
+                    label: 'Citas Atendidas',
+                    data: chartDataCitas,
+                    borderColor: '#588157', // Matcha Main
+                    backgroundColor: 'rgba(88, 129, 87, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { borderDash: [2, 4], color: '#f0f0f0' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // Gráfico de Dona (Estado)
+        const ctxEstado = document.getElementById('estadoChart').getContext('2d');
+        new Chart(ctxEstado, {
+            type: 'doughnut',
+            data: {
+                labels: ['Completadas', 'Pendientes', 'Canceladas'],
+                datasets: [{
+                    data: chartDataEstados,
+                    backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } }
+                },
+                cutout: '75%'
+            }
+        });
+    });
+</script>
+</body>
+</html>
