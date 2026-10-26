@@ -104,7 +104,7 @@ public class AdminController {
         model.addAttribute("ventasMes", ventasMes);
         model.addAttribute("medicosActivos", medicosActivos);
         
-        // 1. Gráfico de Demanda de Citas (Últimos 7 días)
+        // 1. GrÃ¡fico de Demanda de Citas (Ãšltimos 7 dÃ­as)
         List<Cita> todasLasCitas = citaRepository.findAll();
         
         long citasCanceladas = todasLasCitas.stream().filter(c -> "Cancelada".equals(c.getEstado()) || "Cancelada_Medico".equals(c.getEstado()) || "Ausente".equals(c.getEstado())).count();
@@ -116,7 +116,7 @@ public class AdminController {
         model.addAttribute("citasPendientes", citasPendientes);
 
         List<Insumo> todosInsumos = insumoRepository.findAll();
-        java.util.Map<String, List<Insumo>> insumosPorCategoria = todosInsumos.stream().collect(java.util.stream.Collectors.groupingBy(i -> i.getCategoria() != null ? i.getCategoria() : "Sin Categoría"));
+        java.util.Map<String, List<Insumo>> insumosPorCategoria = todosInsumos.stream().collect(java.util.stream.Collectors.groupingBy(i -> i.getCategoria() != null ? i.getCategoria() : "Sin CategorÃ­a"));
         List<InsumoStatsDTO> insumosStats = new ArrayList<>();
         for (java.util.Map.Entry<String, List<Insumo>> entry : insumosPorCategoria.entrySet()) {
             long total = entry.getValue().size();
@@ -138,7 +138,7 @@ public class AdminController {
             demandaCitasData[i] = count;
         }
         
-        // 2. Gráfico de Estado de Citas (Hoy)
+        // 2. GrÃ¡fico de Estado de Citas (Hoy)
         long completadasHoy = todasLasCitas.stream()
             .filter(c -> c.getFechaCita() != null && c.getFechaCita().isEqual(hoy) && ("Atendida".equals(c.getEstado()) || "Completada".equals(c.getEstado())))
             .count();
@@ -170,7 +170,7 @@ public class AdminController {
                 String id = p.getIdPago() != null ? p.getIdPago().toString() : "";
                 String fecha = p.getFechaPago().toString();
                 String tipo = p.getCita() != null ? "Cita #" + p.getCita().getIdCita() : "Consulta Externa";
-                String paciente = p.getCita() != null ? "Público en General" : (p.getDetalleAdicional() != null ? p.getDetalleAdicional() : "Público en General");
+                String paciente = p.getCita() != null ? "PÃºblico en General" : (p.getDetalleAdicional() != null ? p.getDetalleAdicional() : "PÃºblico en General");
                 if (p.getCita() != null && p.getCita().getIdPaciente() != null) {
                     java.util.Optional<com.clinica.limatambo.model.Paciente> pac = pacienteRepository.findById(p.getCita().getIdPaciente());
                     if (pac.isPresent()) {
@@ -216,7 +216,7 @@ public class AdminController {
                 String id = p.getIdPago() != null ? p.getIdPago().toString() : "";
                 String hora = p.getFechaPago().toLocalTime().toString();
                 String tipo = p.getCita() != null ? "Cita #" + p.getCita().getIdCita() : "Consulta Externa";
-                String paciente = p.getCita() != null ? "Público en General" : (p.getDetalleAdicional() != null ? p.getDetalleAdicional() : "Público en General");
+                String paciente = p.getCita() != null ? "PÃºblico en General" : (p.getDetalleAdicional() != null ? p.getDetalleAdicional() : "PÃºblico en General");
                 if (p.getCita() != null && p.getCita().getIdPaciente() != null) {
                     java.util.Optional<com.clinica.limatambo.model.Paciente> pac = pacienteRepository.findById(p.getCita().getIdPaciente());
                     if (pac.isPresent()) {
@@ -262,9 +262,9 @@ public class AdminController {
             model.addAttribute("pago", pago);
             
             String nombrePaciente = "Paciente Particular";
-            String descripcionPago = "Servicio de Consulta M�dica";
+            String descripcionPago = "Servicio de Consulta Medica";
             if (pago.getCita() != null) {
-                descripcionPago = "Consulta Médica - Cita #" + pago.getCita().getIdCita();
+                descripcionPago = "Consulta MÃ©dica - Cita #" + pago.getCita().getIdCita();
                 if (pago.getCita().getIdPaciente() != null) {
                     java.util.Optional<com.clinica.limatambo.model.Paciente> pac = pacienteRepository.findById(pago.getCita().getIdPaciente());
                     if (pac.isPresent()) {
@@ -285,7 +285,7 @@ public class AdminController {
         List<AdminCitaDTO> citasDTO = new ArrayList<>();
         
         for (Cita cita : todasLasCitas) {
-            String nombrePaciente = "Público en General";
+            String nombrePaciente = "PÃºblico en General";
             String nombreMedico = "No Asignado";
             com.clinica.limatambo.model.Paciente pacienteObj = null;
             Integer edad = null;
@@ -465,7 +465,7 @@ public class AdminController {
         
         for (Pago p : pagos) {
             if (p.getFechaPago() != null && (mostrarTodos || (p.getFechaPago().getMonthValue() == mesSeleccionado && p.getFechaPago().getYear() == anioSeleccionado))) {
-                String nombrePaciente = p.getCita() != null ? "Público en General" : (p.getDetalleAdicional() != null ? p.getDetalleAdicional() : "Público en General");
+                String nombrePaciente = p.getCita() != null ? "PÃºblico en General" : (p.getDetalleAdicional() != null ? p.getDetalleAdicional() : "PÃºblico en General");
                 if (p.getCita() != null && p.getCita().getIdPaciente() != null) {
                     java.util.Optional<com.clinica.limatambo.model.Paciente> pac = pacienteRepository.findById(p.getCita().getIdPaciente());
                     if (pac.isPresent()) {
@@ -481,7 +481,7 @@ public class AdminController {
             }
         }
 
-        // Generar lista de los últimos 12 meses para el filtro
+        // Generar lista de los Ãºltimos 12 meses para el filtro
         List<MesFiltroDTO> mesesFiltro = new ArrayList<>();
         LocalDate fechaAux = LocalDate.now();
         java.time.format.DateTimeFormatter fmt = java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy", new java.util.Locale("es", "ES"));
@@ -543,7 +543,7 @@ public class AdminController {
             if ("Pendiente".equals(cita.getEstado()) && cita.getFechaCita() != null && cita.getHoraCita() != null) {
                 java.time.LocalDateTime fechaHoraCita = java.time.LocalDateTime.of(cita.getFechaCita(), cita.getHoraCita());
                 java.time.LocalDateTime limiteConfirmacion = java.time.LocalDateTime.now().plusHours(24);
-                // Habilitar si la cita es dentro de las próximas 24 horas (o ya pasó pero sigue pendiente)
+                // Habilitar si la cita es dentro de las prÃ³ximas 24 horas (o ya pasÃ³ pero sigue pendiente)
                 if (!fechaHoraCita.isAfter(limiteConfirmacion)) {
                     this.puedeConfirmar = true;
                 }
@@ -581,7 +581,7 @@ public class AdminController {
                 return "redirect:/admin/usuarios";
             }
             if (email != null && !email.trim().isEmpty() && usuarioRepository.findByEmail(email).isPresent()) {
-                redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado.");
+                redirectAttributes.addFlashAttribute("error", "El correo electrÃ³nico ya estÃ¡ registrado.");
                 return "redirect:/admin/usuarios";
             }
             if (idRol == 3 && pacienteRepository.existsByDni(dni)) {
@@ -612,7 +612,7 @@ public class AdminController {
                 paciente.setDni(dni);
                 pacienteRepository.save(paciente);
             }
-            redirectAttributes.addFlashAttribute("success", "Usuario creado con éxito.");
+            redirectAttributes.addFlashAttribute("success", "Usuario creado con Ã©xito.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al crear usuario: " + e.getMessage());
         }
@@ -634,7 +634,7 @@ public class AdminController {
                 // Validar que el username no exista en otro usuario
                 java.util.Optional<Usuario> checkUser = usuarioRepository.findByUsername(username);
                 if (checkUser.isPresent() && !checkUser.get().getIdUsuario().equals(idUsuario)) {
-                    redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya está en uso por otra cuenta.");
+                    redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya estÃ¡ en uso por otra cuenta.");
                     return "redirect:/admin/usuarios";
                 }
                 
@@ -642,19 +642,19 @@ public class AdminController {
                 if (email != null && !email.trim().isEmpty()) {
                     java.util.Optional<Usuario> checkEmail = usuarioRepository.findByEmail(email);
                     if (checkEmail.isPresent() && !checkEmail.get().getIdUsuario().equals(idUsuario)) {
-                        redirectAttributes.addFlashAttribute("error", "El correo electrónico ya está registrado por otra cuenta.");
+                        redirectAttributes.addFlashAttribute("error", "El correo electrÃ³nico ya estÃ¡ registrado por otra cuenta.");
                         return "redirect:/admin/usuarios";
                     }
                 }
                 
-                // Si es el usuario logueado actualmente, detectamos para actualizar la sesión de Spring Security
+                // Si es el usuario logueado actualmente, detectamos para actualizar la sesiÃ³n de Spring Security
                 org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
                 boolean esMismoUsuario = auth != null && auth.getName().equals(u.getUsername());
                 
                 u.setUsername(username);
                 u.setEmail(email);
                 
-                // Actualizar contraseña si se proporcionó una nueva
+                // Actualizar contraseÃ±a si se proporcionÃ³ una nueva
                 if (password != null && !password.trim().isEmpty()) {
                     u.setPassword(passwordEncoder.encode(password));
                 }
@@ -731,7 +731,7 @@ public class AdminController {
                 cita.setFechaCita(java.time.LocalDate.parse(fechaCita));
                 cita.setHoraCita(java.time.LocalTime.parse(horaCita));
                 citaRepository.save(cita);
-                redirectAttributes.addFlashAttribute("success", "Cita #" + idCita + " reprogramada con éxito.");
+                redirectAttributes.addFlashAttribute("success", "Cita #" + idCita + " reprogramada con Ã©xito.");
             }
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al editar cita: " + e.getMessage());

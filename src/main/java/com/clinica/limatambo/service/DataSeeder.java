@@ -248,6 +248,7 @@ public class DataSeeder implements CommandLineRunner {
                 c.setHoraCita(LocalTime.of(8 + r.nextInt(8), 0));
                 c.setEstado(r.nextBoolean() ? "Confirmada" : "Pendiente");
                 citaRepository.save(c);
+            }
         }
     }
 

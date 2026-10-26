@@ -38,3 +38,6 @@ uploads/*
 !uploads/.gitkeep
 
 INFORME_AVANCE2_IHM.md
+
+data/
+*.mv.db

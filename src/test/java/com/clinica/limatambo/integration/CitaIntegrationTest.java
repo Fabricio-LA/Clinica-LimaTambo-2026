@@ -90,8 +90,7 @@ class CitaIntegrationTest {
         void testFlujoCompleto_PersistenciaCitaMedica() {
             // 1. Guardar Especialidad
             Especialidad esp = new Especialidad();
-            esp.setNombre("Cardiología");
-            esp.setDescripcion("Enfermedades cardiovasculares");
+            esp.setNombreEspecialidad("Cardiología");
             Especialidad espGuardada = especialidadRepository.save(esp);
             assertNotNull(espGuardada.getIdEspecialidad());
 
@@ -99,9 +98,7 @@ class CitaIntegrationTest {
             Medico medico = new Medico();
             medico.setNombre("Dr. Carlos");
             medico.setApellido("Mendoza");
-            medico.setEspecialidad(espGuardada);
-            medico.setCmp("CMP-45892");
-            medico.setSede("Cajamarca");
+            medico.setIdEspecialidad(espGuardada.getIdEspecialidad());
             Medico medicoGuardado = medicoRepository.save(medico);
             assertNotNull(medicoGuardado.getIdMedico());
 
@@ -141,11 +138,13 @@ class CitaIntegrationTest {
         @DisplayName("Debe rechazar la persistencia duplicada en el mismo horario garantizando unicidad de turno")
         void testPersistencia_ImpideCruceHorario() {
             // Configurar médico y paciente
-            Especialidad esp = especialidadRepository.save(new Especialidad());
+            Especialidad esp = new Especialidad();
+            esp.setNombreEspecialidad("Pediatría");
+            Especialidad espGuardada = especialidadRepository.save(esp);
             Medico medico = new Medico();
             medico.setNombre("Dr. Hugo");
             medico.setApellido("Paredes");
-            medico.setEspecialidad(esp);
+            medico.setIdEspecialidad(espGuardada.getIdEspecialidad());
             Medico medicoGuardado = medicoRepository.save(medico);
 
             Paciente paciente1 = new Paciente();
