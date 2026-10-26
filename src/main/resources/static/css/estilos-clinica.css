@@ -70,7 +70,7 @@ body {
 
 /* HERO SECTION */
 .hero-section {
-    background: linear-gradient(135deg, rgba(62, 86, 34, 0.95) 0%, rgba(143, 185, 53, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(0, 45, 98, 0.95) 0%, rgba(0, 86, 179, 0.9) 100%);
     color: var(--white);
     padding: 100px 0;
 }
@@ -99,7 +99,7 @@ body {
 
 .card-specialty:hover {
     transform: translateY(-12px);
-    box-shadow: 0 10px 30px rgba(143, 185, 53, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 86, 179, 0.2);
 }
 
 .icon-circle {
@@ -199,7 +199,7 @@ body {
     background: white;
     padding: 2.5rem;
     border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(62, 86, 34, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 45, 98, 0.1);
     width: 100%;
     max-width: 400px;
     border-bottom: 5px solid var(--matcha-main);
@@ -208,7 +208,7 @@ body {
 
 .login-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 14px 40px rgba(62, 86, 34, 0.15);
+    box-shadow: 0 14px 40px rgba(0, 45, 98, 0.15);
 }
 
 .logo-login {
@@ -222,7 +222,7 @@ body {
 /* FORM INPUTS */
 .form-control:focus, .form-select:focus {
     border-color: var(--matcha-main) !important;
-    box-shadow: 0 0 0 0.2rem rgba(143, 185, 53, 0.25) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.25) !important;
 }
 
 .input-group-text {
@@ -257,7 +257,7 @@ body {
 
 .modern-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 32px rgba(143, 185, 53, 0.15);
+    box-shadow: 0 12px 32px rgba(0, 86, 179, 0.15);
 }
 
 .table-custom {
@@ -304,7 +304,7 @@ body {
 }
 
 .bg-gradient-matcha {
-    background: linear-gradient(135deg, rgba(62, 86, 34, 0.95) 0%, rgba(143, 185, 53, 0.9) 100%);
+    background: linear-gradient(135deg, rgba(0, 45, 98, 0.95) 0%, rgba(0, 86, 179, 0.9) 100%);
     color: var(--white);
 }
 
@@ -315,7 +315,7 @@ body {
 /* FILTER PANELS */
 .filter-panel {
     background: #ffffff;
-    border: 1px solid rgba(143, 185, 53, 0.1) !important;
+    border: 1px solid rgba(0, 86, 179, 0.1) !important;
     border-radius: 18px !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important;
     transition: all 0.3s ease;
@@ -332,7 +332,7 @@ body {
 }
 
 .filter-panel:hover {
-    box-shadow: 0 8px 25px rgba(143, 185, 53, 0.12) !important;
+    box-shadow: 0 8px 25px rgba(0, 86, 179, 0.12) !important;
     transform: translateY(-2px);
 }
 
@@ -385,7 +385,7 @@ body {
 .filter-panel .form-control:focus, .filter-panel .form-select:focus {
     background-color: #ffffff !important;
     border-color: var(--matcha-main) !important;
-    box-shadow: 0 0 0 0.2rem rgba(143, 185, 53, 0.15) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.15) !important;
     outline: none;
 }
 
@@ -423,7 +423,7 @@ body {
 }
 .nav-link-custom {
     font-size: 16px;
-    color: #7b8e73;
+    color: #475569;
     font-weight: 600;
     padding: 5px 0;
     margin: 0 15px;
@@ -461,7 +461,7 @@ body {
     transition: all 0.3s;
 }
 .btn-reservar-cita:hover {
-    background-color: #2b3d17;
+    background-color: #001a38;
     color: white;
 }
 .btn-iniciar-sesion {
@@ -472,11 +472,13 @@ body {
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    transition: opacity 0.3s;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
 }
 .btn-iniciar-sesion:hover {
-    opacity: 0.8;
-    color: var(--matcha-dark);
+    background-color: var(--matcha-soft);
+    color: var(--matcha-main);
 }
 .btn-iniciar-sesion i {
     font-size: 1.3rem;
@@ -484,7 +486,7 @@ body {
 .nav-divider {
     width: 1px;
     height: 28px;
-    background-color: #c8d2c2;
+    background-color: #cbd5e1;
     margin: 0 16px;
 }
 
@@ -495,7 +497,7 @@ body {
 /* FILTER PANELS */
 .filter-panel {
     background: #ffffff;
-    border: 1px solid rgba(143, 185, 53, 0.1) !important;
+    border: 1px solid rgba(0, 86, 179, 0.1) !important;
     border-radius: 18px !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important;
     transition: all 0.3s ease;
@@ -512,7 +514,7 @@ body {
 }
 
 .filter-panel:hover {
-    box-shadow: 0 8px 25px rgba(143, 185, 53, 0.12) !important;
+    box-shadow: 0 8px 25px rgba(0, 86, 179, 0.12) !important;
     transform: translateY(-2px);
 }
 
@@ -565,7 +567,7 @@ body {
 .filter-panel .form-control:focus, .filter-panel .form-select:focus {
     background-color: #ffffff !important;
     border-color: var(--matcha-main) !important;
-    box-shadow: 0 0 0 0.2rem rgba(143, 185, 53, 0.15) !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 86, 179, 0.15) !important;
     outline: none;
 }
 
@@ -603,7 +605,7 @@ body {
 }
 .nav-link-custom {
     font-size: 16px;
-    color: #7b8e73;
+    color: #475569;
     font-weight: 600;
     padding: 5px 0;
     margin: 0 15px;
@@ -641,7 +643,7 @@ body {
     transition: all 0.3s;
 }
 .btn-reservar-cita:hover {
-    background-color: #2b3d17;
+    background-color: #001a38;
     color: white;
 }
 .btn-iniciar-sesion {
@@ -652,11 +654,13 @@ body {
     align-items: center;
     gap: 8px;
     text-decoration: none;
-    transition: opacity 0.3s;
+    padding: 6px 14px;
+    border-radius: 8px;
+    transition: all 0.25s ease;
 }
 .btn-iniciar-sesion:hover {
-    opacity: 0.8;
-    color: var(--matcha-dark);
+    background-color: var(--matcha-soft);
+    color: var(--matcha-main);
 }
 .btn-iniciar-sesion i {
     font-size: 1.3rem;
@@ -664,7 +668,7 @@ body {
 .nav-divider {
     width: 1px;
     height: 28px;
-    background-color: #c8d2c2;
+    background-color: #cbd5e1;
     margin: 0 16px;
 }
 
@@ -869,7 +873,7 @@ body {
     cursor: pointer;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months:hover {
-    background-color: rgba(143, 185, 53, 0.1) !important;
+    background-color: rgba(0, 86, 179, 0.1) !important;
     border-radius: 4px;
 }
 .flatpickr-current-month .flatpickr-monthDropdown-months option {
@@ -908,9 +912,9 @@ body {
 
 /* Badges Soft (Dashboard) */
 .badge-soft-success {
-    background-color: rgba(143, 185, 53, 0.15) !important;
+    background-color: rgba(0, 86, 179, 0.15) !important;
     color: var(--matcha-dark) !important;
-    border: 1px solid rgba(143, 185, 53, 0.3) !important;
+    border: 1px solid rgba(0, 86, 179, 0.3) !important;
 }
 .badge-soft-warning {
     background-color: rgba(255, 193, 7, 0.15) !important;
@@ -1070,4 +1074,128 @@ body {
     .table-responsive {
         overflow-x: hidden !important;
     }
+}
+
+/* ==========================================================================
+   HOMOGENEIZACION PALETA AZUL SALUD INSTITUCIONAL - CLINICA LIMATAMBO
+   ========================================================================== */
+
+/* Navbar */
+.navbar-limatambo {
+    background-color: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.nav-link-custom {
+    font-size: 15px !important;
+    color: #334155 !important;
+    font-weight: 600 !important;
+    padding: 8px 16px !important;
+    margin: 0 4px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease-in-out !important;
+    text-decoration: none !important;
+    position: relative !important;
+}
+
+.nav-link-custom:hover {
+    color: #0056b3 !important;
+    background-color: #e7f1ff !important;
+}
+
+.nav-link-custom.active {
+    color: #0056b3 !important;
+    font-weight: 700 !important;
+}
+
+.nav-link-custom.active::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -2px !important;
+    left: 16px !important;
+    right: 16px !important;
+    height: 3px !important;
+    background-color: #0056b3 !important;
+    border-radius: 2px !important;
+}
+
+/* Boton Iniciar Sesion */
+.btn-iniciar-sesion {
+    color: #002d62 !important;
+    font-weight: 700 !important;
+    font-size: 15px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    text-decoration: none !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease-in-out !important;
+    background: transparent !important;
+}
+
+.btn-iniciar-sesion:hover {
+    background-color: #e7f1ff !important;
+    color: #0056b3 !important;
+    text-decoration: none !important;
+}
+
+.btn-iniciar-sesion i {
+    font-size: 1.25rem !important;
+    color: #0056b3 !important;
+    transition: color 0.2s ease !important;
+}
+
+.btn-iniciar-sesion:hover i {
+    color: #004085 !important;
+}
+
+/* Boton Reservar Cita */
+.btn-reservar-cita {
+    background-color: #002d62 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 9px 22px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    transition: all 0.25s ease-in-out !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.btn-reservar-cita:hover {
+    background-color: #001a38 !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 14px rgba(0, 45, 98, 0.3) !important;
+}
+
+.nav-divider {
+    width: 1px !important;
+    height: 28px !important;
+    background-color: #e2e8f0 !important;
+    margin: 0 14px !important;
+}
+
+/* Footer Institucional */
+footer, .footer-clinica {
+    background-color: #002d62 !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+footer a, .footer-link {
+    color: rgba(255, 255, 255, 0.75) !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
+}
+
+footer a:hover, .footer-link:hover {
+    color: #ffffff !important;
+}
+
+/* Hero Section degradado azul */
+.hero-section, .hero-new {
+    background: linear-gradient(135deg, #002d62 0%, #0056b3 100%) !important;
 }

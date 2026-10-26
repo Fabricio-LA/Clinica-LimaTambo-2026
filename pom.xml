@@ -54,11 +54,10 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Driver Base de Datos en Memoria H2 (Para Batería de Pruebas Automatizadas) -->
+        <!-- Driver Base de Datos H2 (Para ejecución local portable y batería de pruebas) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- Correo Electrónico y Notificaciones -->
