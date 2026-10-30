@@ -44,15 +44,25 @@ public class DisponibilidadController {
             return horarios;
         }
 
-        int diaSemana = fecha.getDayOfWeek().getValue(); 
-        String[] diasPermitidos = medico.getDiasLaborables().split(",");
+        int diaSemana = fecha.getDayOfWeek().getValue(); // 1=Lunes, 7=Domingo
+        String diasStr = medico.getDiasLaborables();
         boolean trabajaEseDia = false;
-        
-        for (String diaStr : diasPermitidos) {
-            if (diaStr.trim().equals(String.valueOf(diaSemana))) {
-                trabajaEseDia = true;
-                break;
+
+        if (diasStr.contains(",")) {
+            for (String d : diasStr.split(",")) {
+                if (d.trim().equals(String.valueOf(diaSemana))) {
+                    trabajaEseDia = true;
+                    break;
+                }
             }
+        } else if (diasStr.contains("L-M-V") || diasStr.contains("L, M, V")) {
+            trabajaEseDia = (diaSemana == 1 || diaSemana == 3 || diaSemana == 5);
+        } else if (diasStr.contains("M-J-S")) {
+            trabajaEseDia = (diaSemana == 2 || diaSemana == 4 || diaSemana == 6);
+        } else if (diasStr.contains("L-M-X-J")) {
+            trabajaEseDia = (diaSemana >= 1 && diaSemana <= 4);
+        } else {
+            trabajaEseDia = (diaSemana >= 1 && diaSemana <= 5);
         }
         
         if (!trabajaEseDia) {

@@ -53,13 +53,13 @@
 
                 <div class="card border-0 shadow-sm p-4 p-md-5" style="border-radius: 16px;">
                     
-                    <form id="wizardForm" th:action="@{/citas/reservar}" method="post">
+                    <form id="wizardForm" th:action="@{/citas/reservar}" method="post" novalidate>
                         
                         <!-- P A S O   1 -->
                         <div class="wizard-step active" id="step1">
                             <h4 class="fw-bold mb-4" style="color: var(--matcha-dark)"><i class="bi bi-heart-pulse me-2"></i>Selecciona la Especialidad</h4>
                             
-                            <input type="hidden" name="idEspecialidad" id="inputEspecialidad" required>
+                            <input type="hidden" name="idEspecialidad" id="inputEspecialidad">
                             
                             <div class="row g-3">
                                 <div class="col-md-4" th:each="esp : ${especialidades}">
@@ -118,7 +118,7 @@
                         <div class="wizard-step" id="step2">
                             <h4 class="fw-bold mb-4" style="color: var(--matcha-dark)"><i class="bi bi-people me-2"></i>Elige a tu Médico</h4>
                             
-                            <input type="hidden" name="idMedico" id="inputMedico" required>
+                            <input type="hidden" name="idMedico" id="inputMedico">
                             <div class="row g-3 mb-4" id="medicosContainer">
                                 <div class="col-md-6 medico-card" th:each="med : ${medicos}" th:data-esp="${med.idEspecialidad}">
                                     <div class="card-medico-v2" th:data-id="${med.idMedico}" th:data-name="${'Dr. ' + med.nombre + ' ' + med.apellido}" th:data-dias="${med.diasLaborables}" onclick="selectMedico(this)">
@@ -136,11 +136,11 @@
                             <div class="row g-4 mt-2">
                                 <div class="col-md-5">
                                     <h6 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-calendar3 me-2"></i>Fecha de Consulta</h6>
-                                    <input type="text" class="form-control" name="fechaCita" id="inputFecha" placeholder="Selecciona un doctor primero..." required readonly style="background-color: var(--surface); border:none; padding:15px;">
+                                    <input type="text" class="form-control" name="fechaCita" id="inputFecha" placeholder="Selecciona un doctor primero..." readonly style="background-color: var(--surface); border:none; padding:15px;">
                                 </div>
                                 <div class="col-md-7">
                                     <h6 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-clock me-2"></i>Hora Disponible</h6>
-                                    <input type="hidden" name="horaCita" id="inputHoraHidden" required>
+                                    <input type="hidden" name="horaCita" id="inputHoraHidden">
                                     <div id="contenedorHoras" class="d-flex flex-wrap gap-2">
                                         <div class="text-muted small w-100">Seleccione primero una fecha para ver los horarios.</div>
                                     </div>
@@ -222,7 +222,7 @@
                             </div>
 
                             <div class="form-check mt-4 mb-2 text-start">
-                                <input class="form-check-input border-secondary" type="checkbox" id="terminosReservaCheck" required>
+                                <input class="form-check-input border-secondary" type="checkbox" id="terminosReservaCheck" checked>
                                 <label class="form-check-label text-muted small" for="terminosReservaCheck">
                                     He leído y acepto los <a th:href="@{/terminos}" target="_blank" class="text-decoration-none fw-bold" style="color: var(--matcha-dark);">Términos y Condiciones</a> del servicio de salud.
                                 </label>
@@ -230,7 +230,7 @@
 
                             <div class="d-flex justify-content-between mt-4">
                                 <button type="button" class="btn btn-outline-secondary px-4" onclick="prevStep(2)" style="border-radius: 20px;"><i class="bi bi-arrow-left me-2"></i> Atrás</button>
-                                <button type="submit" class="btn btn-reservar px-4" style="background-color: #0056b3;">Confirmar Cita <i class="bi bi-check-circle ms-2"></i></button>
+                                <button type="button" id="btnConfirmarCita" class="btn btn-reservar px-4" onclick="confirmarReserva()" style="background-color: #0056b3;">Confirmar Cita <i class="bi bi-check-circle ms-2"></i></button>
                             </div>
                         </div>
 
@@ -316,8 +316,21 @@
             document.getElementById('inputMedico').value = element.getAttribute('data-id');
             medName = element.getAttribute('data-name');
             
-            const diasJava = element.getAttribute('data-dias').split(',').map(Number);
-            const diasFlat = diasJava.map(d => d === 7 ? 0 : d);
+            let diasVal = element.getAttribute('data-dias') || '';
+            let diasFlat = [1, 2, 3, 4, 5]; // por defecto Lun a Vie
+            
+            if (diasVal.includes(',')) {
+                let nums = diasVal.split(',').map(n => parseInt(n.trim())).filter(n => !isNaN(n));
+                if (nums.length > 0) {
+                    diasFlat = nums.map(d => d === 7 ? 0 : d);
+                }
+            } else if (diasVal.includes('L-M-V') || diasVal.includes('L, M, V')) {
+                diasFlat = [1, 3, 5];
+            } else if (diasVal.includes('M-J-S')) {
+                diasFlat = [2, 4, 6];
+            } else if (diasVal.includes('L-M-X-J')) {
+                diasFlat = [1, 2, 3, 4];
+            }
             
             document.getElementById('inputFecha').placeholder = "Elige un día en el calendario...";
             
@@ -329,7 +342,7 @@
                 locale: "es",
                 minDate: "today",
                 maxDate: new Date(new Date().setMonth(new Date().getMonth() + 3)),
-                inline: true, // Para mostrarlo bonito dentro de la caja gris
+                inline: true,
                 disable: [
                     function(date) {
                         return !diasFlat.includes(date.getDay());
@@ -352,7 +365,8 @@
             });
             btn.classList.add('active');
             
-            document.getElementById('inputHoraHidden').value = hora;
+            let horaLimpia = (hora && hora.length >= 5) ? hora.substring(0, 5) : hora;
+            document.getElementById('inputHoraHidden').value = horaLimpia;
             checkStep2();
         }
 
@@ -514,6 +528,42 @@
                 document.getElementById('indicator-3').classList.remove('active');
                 document.getElementById('label-3').classList.remove('active');
             }
+        }
+
+        function confirmarReserva() {
+            const med = document.getElementById('inputMedico').value;
+            const date = document.getElementById('inputFecha').value;
+            const horaInput = document.getElementById('inputHoraHidden');
+            const terminos = document.getElementById('terminosReservaCheck');
+
+            if (!med || !date || !horaInput.value) {
+                alert('Por favor complete todos los datos de su cita (médico, fecha y horario) antes de confirmar.');
+                return;
+            }
+
+            if (terminos && !terminos.checked) {
+                alert('Debe aceptar los Términos y Condiciones del servicio para continuar.');
+                terminos.focus();
+                return;
+            }
+
+            if (horaInput.value.length > 5) {
+                horaInput.value = horaInput.value.substring(0, 5);
+            }
+
+            const btn = document.getElementById('btnConfirmarCita');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Confirmando Cita...';
+            }
+
+            console.log("Enviando formulario con:", {
+                idMedico: med,
+                fechaCita: date,
+                horaCita: horaInput.value
+            });
+
+            document.getElementById('wizardForm').submit();
         }
     </script>
 </body>

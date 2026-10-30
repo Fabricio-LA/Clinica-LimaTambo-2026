@@ -77,14 +77,26 @@ public class CitaController {
         Medico m = medicoOpt.get();
         if (m.getHoraInicio() == null || m.getHoraFin() == null || m.getDiasLaborables() == null) return false;
         int diaSemana = fecha.getDayOfWeek().getValue();
-        String[] diasPermitidos = m.getDiasLaborables().split(",");
+        String diasStr = m.getDiasLaborables();
         boolean trabajaEseDia = false;
-        for (String d : diasPermitidos) {
-            if (d.trim().equals(String.valueOf(diaSemana))) {
-                trabajaEseDia = true;
-                break;
+
+        if (diasStr.contains(",")) {
+            for (String d : diasStr.split(",")) {
+                if (d.trim().equals(String.valueOf(diaSemana))) {
+                    trabajaEseDia = true;
+                    break;
+                }
             }
+        } else if (diasStr.contains("L-M-V") || diasStr.contains("L, M, V")) {
+            trabajaEseDia = (diaSemana == 1 || diaSemana == 3 || diaSemana == 5);
+        } else if (diasStr.contains("M-J-S")) {
+            trabajaEseDia = (diaSemana == 2 || diaSemana == 4 || diaSemana == 6);
+        } else if (diasStr.contains("L-M-X-J")) {
+            trabajaEseDia = (diaSemana >= 1 && diaSemana <= 4);
+        } else {
+            trabajaEseDia = (diaSemana >= 1 && diaSemana <= 5);
         }
+
         if (!trabajaEseDia) return false;
         if (hora.isBefore(m.getHoraInicio()) || !hora.isBefore(m.getHoraFin())) return false;
         boolean ocupado = citaRepository.existsByIdMedicoAndFechaCitaAndHoraCitaAndEstadoNot(idMedico, fecha, hora, "Cancelada");
@@ -94,8 +106,14 @@ public class CitaController {
 
     @PostMapping("/reservar")
     public String reservarCita(Cita cita, Authentication authentication) {
+        System.out.println(">>> [POST /citas/reservar] IdMedico: " + cita.getIdMedico() + 
+                           ", Fecha: " + cita.getFechaCita() + 
+                           ", Hora: " + cita.getHoraCita() + 
+                           ", Auth: " + (authentication != null ? authentication.getName() : "null"));
+                           
         if (authentication != null && authentication.isAuthenticated()) {
             if (!esHorarioValido(cita.getIdMedico(), cita.getFechaCita(), cita.getHoraCita())) {
+                System.out.println(">>> [POST /citas/reservar] Horario NO disponible o no valido.");
                 return "redirect:/paciente/dashboard?errorHorario=true";
             }
 
@@ -107,12 +125,13 @@ public class CitaController {
                 if (pacienteOpt.isPresent()) {
                     Paciente p = pacienteOpt.get();
                     cita.setIdPaciente(p.getIdPaciente());
-                    cita.setEstado("Pendiente");
-                    citaRepository.save(cita);
+                    cita.setEstado("Confirmada");
+                    Cita citaGuardada = citaRepository.save(cita);
+                    System.out.println(">>> [POST /citas/reservar] Cita creada con éxito con ID: " + citaGuardada.getIdCita());
 
                     // Create Pago for the appointment
                     double tarifaBase = 100.0;
-                    Optional<Medico> mOpt = medicoRepository.findById(cita.getIdMedico());
+                    Optional<Medico> mOpt = medicoRepository.findById(citaGuardada.getIdMedico());
                     if (mOpt.isPresent()) {
                         Optional<Especialidad> eOpt = especialidadRepository.findById(mOpt.get().getIdEspecialidad());
                         if (eOpt.isPresent()) {
@@ -126,11 +145,12 @@ public class CitaController {
                     double total = tarifaBase - (tarifaBase * desc);
 
                     Pago pago = new Pago();
-                    pago.setCita(cita);
+                    pago.setCita(citaGuardada);
                     pago.setMonto(BigDecimal.valueOf(total));
                     pago.setMetodoPago("Tarjeta (Reserva web)");
                     pago.setEstado("Pagado");
                     pagoRepository.save(pago);
+                    System.out.println(">>> [POST /citas/reservar] Pago registrado para cita " + citaGuardada.getIdCita() + " por S/ " + total);
 
                     return "redirect:/paciente/dashboard?reservaExito=true";
                 }
